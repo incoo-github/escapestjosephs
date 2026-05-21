@@ -19,7 +19,6 @@
             user-select: none;
         }
 
-        /* --- THEME STYLES (MATCHING MAIN MENU) --- */
         .menu-screen {
             display: flex;
             flex-direction: column;
@@ -80,7 +79,7 @@
             max-width: 340px;
             background: rgba(0, 0, 0, 0.85);
             padding: 20px;
-            border-radius: 0px; /* Square school look */
+            border-radius: 0px;
             border: 6px solid #ff0000;
         }
 
@@ -103,7 +102,6 @@
             box-shadow: 7px 7px 0px #000;
         }
 
-        /* --- NEW SIMPLE SHOP DESIGN --- */
         .shop-list {
             display: flex;
             flex-direction: column;
@@ -163,7 +161,6 @@
             font-weight: bold;
         }
 
-        /* --- REST OF GAME UI --- */
         #game-container { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 10; }
         canvas { display: block; width: 100%; height: 100%; }
         #game-ui { position: absolute; top: 20px; left: 20px; color: yellow; font-size: 28px; text-shadow: 3px 3px black; z-index: 15; }
@@ -299,7 +296,6 @@
             renderShop();
         }
 
-        // --- CORE ENGINE (MINIFIED/FIXED COLLISION) ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const nextbotImg = new Image();

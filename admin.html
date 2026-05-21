@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape St Joseph's - Creator Dashboard</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #222;
+            padding: 30px;
+            border: 4px solid #ffff00;
+            border-radius: 12px;
+            box-shadow: 0px 0px 20px rgba(255, 255, 0, 0.2);
+        }
+        h1 { color: #ffff00; margin-bottom: 20px; }
+        textarea {
+            width: 100%;
+            height: 80px;
+            background: #000;
+            color: #DEFF9A;
+            border: 2px solid #555;
+            padding: 10px;
+            font-size: 18px;
+            font-family: monospace;
+            box-sizing: border-box;
+            resize: none;
+        }
+        button {
+            margin-top: 15px;
+            background: #ff0000;
+            color: white;
+            border: 3px solid black;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #333;
+        }
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) { background: #cc0000; transform: scale(1.02); }
+        #status-indicator {
+            color: #ffaa00;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>GOD-MODE PANEL</h1>
+        <div id="status-indicator">Connecting to school network...</div>
+        <p>Type an announcement to broadcast to every single active student screen instantly:</p>
+        
+        <textarea id="msgInput" placeholder="Type message here... (e.g. I see you playing during class...)"></textarea>
+        <br>
+        <button id="sendBtn" onclick="sendBroadcast()" disabled>SEND TO ALL SCREENS</button>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://jspotbqoqqpkqtnaqyqc.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Config matches the index file to correctly route messages publically
+        const channel = supabase.channel('room-1', {
+            config: {
+                broadcast: { self: true, ack: false }
+            }
+        });
+        
+        channel.subscribe((status) => {
+            const statusDiv = document.getElementById('status-indicator');
+            const btn = document.getElementById('sendBtn');
+            if (status === 'SUBSCRIBED') {
+                statusDiv.innerText = "Network Status: Connected to Realtime!";
+                statusDiv.style.color = "#00ff00";
+                btn.disabled = false;
+            } else {
+                statusDiv.innerText = "Network Status: " + status;
+                statusDiv.style.color = "#ff0000";
+                btn.disabled = true;
+            }
+        });
+
+        async function sendBroadcast() {
+            const input = document.getElementById('msgInput');
+            const text = input.value.trim();
+            
+            if (!text) return alert("Type something first!");
+
+            try {
+                await channel.send({
+                    type: 'broadcast',
+                    event: 'announcement',
+                    payload: { message: text }
+                });
+                input.value = ""; 
+                alert("Announcement Blasted successfully!");
+            } catch (err) {
+                alert("Error sending broadcast: " + err.message);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -74,7 +74,6 @@
             width: 80px;
             height: auto;
             left: 50%;
-            /* Fixed: Changed top to 0% so the head sit on top of the E, not centered within it */
             top: 0%;
             transform: translate(-50%, -50%);
             z-index: -1;
@@ -83,7 +82,6 @@
         }
 
         @keyframes mini-bounce {
-            /* Fixed: Bounce keyframes must include the constant centering and vertical alignment offset */
             0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-3deg) scale(1); }
             50% { transform: translate(-50%, -50%) translateY(-5px) rotate(3deg) scale(1.05); }
         }
@@ -217,9 +215,46 @@
             border: 2px solid white;
             z-index: 15;
         }
+
+        .school-announcement {
+            position: fixed;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffff00;
+            color: #000;
+            border: 5px solid #000;
+            box-shadow: 8px 8px 0px #000;
+            padding: 15px 25px;
+            box-sizing: border-box;
+            z-index: 100;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .school-announcement.active {
+            top: 20px;
+        }
+
+        .announcement-header {
+            color: #ff0000;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
+
+    <div id="announcement-banner" class="school-announcement">
+        <div class="announcement-header">⚠️ Principal Announcement ⚠️</div>
+        <div id="announcement-text">Welcome to St Joseph's! Don't get caught.</div>
+    </div>
 
     <div id="game-menu" class="menu-screen">
         <div class="title-container">
@@ -250,7 +285,7 @@
         </div>
 
         <div class="code-box">
-            <h3>Enter Code:</h3>
+            <h3>Enter Secret Code:</h3>
             <input type="text" id="cheatCodeField" class="code-input" placeholder="ENTER CODE...">
             <br><br>
             <button class="btn" style="font-size:16px; padding:6px 12px;" onclick="checkCheatCode()">Submit Code</button>
@@ -277,6 +312,17 @@
                 audio.play().catch((err)=>{ console.log("Audio play blocked until click:", err) });
                 musicStarted = true;
             }
+        }
+
+        function triggerAnnouncement(message, duration = 4000) {
+            const banner = document.getElementById('announcement-banner');
+            const txt = document.getElementById('announcement-text');
+            txt.innerText = message;
+            banner.classList.add('active');
+
+            setTimeout(() => {
+                banner.classList.remove('active');
+            }, duration);
         }
 
         const canvas = document.getElementById('gameCanvas');
@@ -345,10 +391,12 @@
                 deviceSetting = "pc";
                 player.mouseSensitivity = 0.0012; 
                 document.getElementById('control-toggle').innerText = "Device Mode: Keyboard & Mouse";
+                triggerAnnouncement("Controls switched to standard PC!");
             } else {
                 deviceSetting = "chromebook";
                 player.mouseSensitivity = 0.0032; 
                 document.getElementById('control-toggle').innerText = "Device Mode: Chromebook Default";
+                triggerAnnouncement("Controls optimized for Chromebook tracking!");
             }
         }
 
@@ -359,11 +407,13 @@
                 player.moveSpeed = 0.09; 
                 document.getElementById('speed-toggle').innerText = "Performance: Chromebook Boost";
                 document.getElementById('speed-toggle').style.background = "#DEFF9A";
+                triggerAnnouncement("Performance Boost Activated!");
             } else {
                 FOV_Rays = 400;
                 player.moveSpeed = 0.07;
                 document.getElementById('speed-toggle').innerText = "Performance: Standard";
                 document.getElementById('speed-toggle').style.background = "#fff";
+                triggerAnnouncement("Standard Graphics Restored.");
             }
         }
 
@@ -371,13 +421,13 @@
             let entry = document.getElementById('cheatCodeField').value.trim().toUpperCase();
             if(entry === "GOOSHOES" || entry === "53045") {
                 player.moveSpeed = 0.15;
-                alert("SPEED CHEAT UNLOCKED!");
+                triggerAnnouncement("SPEED CHEAT UNLOCKED!");
             } else if(entry === "TELEPORT" || entry === "31718") {
                 player.x = 10.5;
                 player.y = 5.5;
-                alert("TELEPORT CHEAT UNLOCKED!");
+                triggerAnnouncement("TELEPORT CHEAT UNLOCKED!");
             } else {
-                alert("Invalid Code!");
+                triggerAnnouncement("Invalid Cheat Code!");
             }
             document.getElementById('cheatCodeField').value = "";
         }
@@ -404,6 +454,7 @@
             });
             document.addEventListener('mousemove', handleMouseMove);
 
+            triggerAnnouncement("Find all 7 notebooks!", 5000);
             gameLoop();
         }
 
@@ -516,6 +567,9 @@
                 schoolMap[currentGridY][currentGridX] = 0; 
                 notebooksCollected++;
                 document.getElementById('game-ui').innerText = `Notebooks: ${notebooksCollected}/7`;
+                
+                triggerAnnouncement(`You picked up a notebook! (${notebooksCollected}/7)`);
+
                 if(notebooksCollected === 7) {
                     alert("YOU ESCAPED ST JOSEPH'S!");
                     window.location.reload();

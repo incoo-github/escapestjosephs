@@ -30,9 +30,11 @@
             z-index: 20;
             box-sizing: border-box;
             padding: 20px;
-            background-color: #4a148c; /* Solid fallback colorful background */
+            background-color: #4a148c; 
+            background-image: url('background.png'); 
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
         }
 
         #game-menu {
@@ -248,21 +250,23 @@
     <script>
         const SUPABASE_URL = 'https://jspotbqoqqpkqtnaqyqc.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-        // Crucial Fix: Setting config to broadcast over public channels
-        const networkChannel = supabase.channel('room-1', {
-            config: {
-                broadcast: { self: true, ack: false }
-            }
-        });
+        if (supabase) {
+            const networkChannel = supabase.channel('room-1', {
+                config: {
+                    broadcast: { self: true, ack: false }
+                }
+            });
 
-        networkChannel
-          .on('broadcast', { event: 'announcement' }, (response) => {
-              const msg = response.payload?.message || response.message;
-              if (msg) showLiveAnnouncement(msg);
-          })
-          .subscribe();
+            networkChannel
+              .on('broadcast', { event: 'announcement' }, (response) => {
+                  const msg = response.payload?.message || response.message;
+                  if (msg) showLiveAnnouncement(msg);
+              })
+              .subscribe();
+        }
 
         function showLiveAnnouncement(msg) {
             const banner = document.getElementById('announcement-banner');

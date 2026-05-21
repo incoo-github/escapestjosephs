@@ -64,7 +64,7 @@
         <h1>GOD-MODE PANEL</h1>
         <div id="status-indicator">Connecting to school network...</div>
         <p>Type an announcement to broadcast to every single active student screen instantly:</p>
-        
+         
         <textarea id="msgInput" placeholder="Type message here... (e.g. I see you playing during class...)"></textarea>
         <br>
         <button id="sendBtn" onclick="sendBroadcast()" disabled>SEND TO ALL SCREENS</button>
@@ -73,46 +73,51 @@
     <script>
         const SUPABASE_URL = 'https://jspotbqoqqpkqtnaqyqc.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Config matches the index file to correctly route messages publically
-        const channel = supabase.channel('room-1', {
-            config: {
-                broadcast: { self: true, ack: false }
-            }
-        });
         
-        channel.subscribe((status) => {
-            const statusDiv = document.getElementById('status-indicator');
-            const btn = document.getElementById('sendBtn');
-            if (status === 'SUBSCRIBED') {
-                statusDiv.innerText = "Network Status: Connected to Realtime!";
-                statusDiv.style.color = "#00ff00";
-                btn.disabled = false;
-            } else {
-                statusDiv.innerText = "Network Status: " + status;
-                statusDiv.style.color = "#ff0000";
-                btn.disabled = true;
-            }
-        });
+        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-        async function sendBroadcast() {
-            const input = document.getElementById('msgInput');
-            const text = input.value.trim();
+        if (supabase) {
+            const channel = supabase.channel('room-1', {
+                config: {
+                    broadcast: { self: true, ack: false }
+                }
+            });
             
-            if (!text) return alert("Type something first!");
+            channel.subscribe((status) => {
+                const statusDiv = document.getElementById('status-indicator');
+                const btn = document.getElementById('sendBtn');
+                if (status === 'SUBSCRIBED') {
+                    statusDiv.innerText = "Network Status: Connected to Realtime!";
+                    statusDiv.style.color = "#00ff00";
+                    btn.disabled = false;
+                } else {
+                    statusDiv.innerText = "Network Status: " + status;
+                    statusDiv.style.color = "#ff0000";
+                    btn.disabled = true;
+                }
+            });
 
-            try {
-                await channel.send({
-                    type: 'broadcast',
-                    event: 'announcement',
-                    payload: { message: text }
-                });
-                input.value = ""; 
-                alert("Announcement Blasted successfully!");
-            } catch (err) {
-                alert("Error sending broadcast: " + err.message);
+            async function sendBroadcast() {
+                const input = document.getElementById('msgInput');
+                const text = input.value.trim();
+                
+                if (!text) return alert("Type something first!");
+
+                try {
+                    await channel.send({
+                        type: 'broadcast',
+                        event: 'announcement',
+                        payload: { message: text }
+                    });
+                    input.value = ""; 
+                    alert("Announcement Blasted successfully!");
+                } catch (err) {
+                    alert("Error sending broadcast: " + err.message);
+                }
             }
+        } else {
+            document.getElementById('status-indicator').innerText = "Network Status: Connection Failed (Script Missing)";
+            document.getElementById('status-indicator').style.color = "#ff0000";
         }
     </script>
 </body>

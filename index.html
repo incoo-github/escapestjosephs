@@ -64,23 +64,26 @@
 
         .letter-e-wrapper {
             position: relative;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .menu-avatar-sticker {
             position: absolute;
             width: 80px;
             height: auto;
-            left: -20px;
-            top: -25px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
             z-index: -1;
             filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.7));
             animation: mini-bounce 2.5s infinite ease-in-out;
         }
 
         @keyframes mini-bounce {
-            0%, 100% { transform: translateY(0) rotate(-3deg) scale(1); }
-            50% { transform: translateY(-5px) rotate(3deg) scale(1.05); }
+            0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-3deg) scale(1); }
+            50% { transform: translate(-50%, -50%) translateY(-5px) rotate(3deg) scale(1.05); }
         }
 
         h2 {

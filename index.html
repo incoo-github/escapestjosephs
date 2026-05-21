@@ -19,6 +19,7 @@
             user-select: none;
         }
 
+        /* --- THEME STYLES (MATCHING MAIN MENU) --- */
         .menu-screen {
             display: flex;
             flex-direction: column;
@@ -40,53 +41,16 @@
             background-repeat: no-repeat;
         }
 
-        #game-menu {
-            border: 10px solid #ff0000;
-            display: flex;
-        }
-
-        #options-menu, #shop-menu {
-            display: none;
-            border: 10px solid #ffff00;
-            color: white;
-        }
-
-        .title-container {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
+        #game-menu { border: 10px solid #ff0000; }
+        #options-menu { border: 10px solid #ffff00; color: white; }
+        #shop-menu { border: 10px solid #ffd700; }
 
         h1 {
             font-size: 60px;
             color: #ffff00;
             text-shadow: 5px 5px #000;
-            margin: 0;
+            margin: 0 0 20px 0;
             -webkit-text-stroke: 2px black;
-        }
-
-        .letter-e-wrapper {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .menu-avatar-sticker {
-            position: absolute;
-            width: 80px;
-            height: auto;
-            left: 50%;
-            top: 0%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.7));
-            animation: mini-bounce 2.5s infinite ease-in-out;
-        }
-
-        @keyframes mini-bounce {
-            0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-3deg) scale(1); }
-            50% { transform: translate(-50%, -50%) translateY(-5px) rotate(3deg) scale(1.05); }
         }
 
         h2 {
@@ -99,10 +63,13 @@
 
         .coin-counter {
             font-size: 28px;
-            color: #ffd700;
-            text-shadow: 2px 2px #000;
-            margin-bottom: 15px;
+            color: #ffff00;
+            background: rgba(0,0,0,0.8);
+            padding: 5px 15px;
+            border: 3px solid #ffd700;
+            margin-bottom: 20px;
             font-weight: bold;
+            box-shadow: 4px 4px 0px #000;
         }
 
         .menu-buttons {
@@ -110,11 +77,11 @@
             flex-direction: column;
             gap: 12px;
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
             background: rgba(0, 0, 0, 0.85);
             padding: 20px;
-            border-radius: 12px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0px; /* Square school look */
+            border: 6px solid #ff0000;
         }
 
         .btn {
@@ -125,274 +92,129 @@
             font-size: 20px;
             cursor: pointer;
             font-family: inherit;
-            box-shadow: 5px 5px 0px #333;
+            box-shadow: 5px 5px 0px #000;
             font-weight: bold;
             position: relative;
         }
 
         .btn:hover:not(.disabled) {
             background-color: #ffff00;
-            transform: scale(1.03);
+            transform: translateY(-2px);
+            box-shadow: 7px 7px 0px #000;
         }
 
-        .btn-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .soon-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 0, 0, 0.15);
-            color: #fff;
-            font-size: 20px;
-            font-weight: bold;
+        /* --- NEW SIMPLE SHOP DESIGN --- */
+        .shop-list {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 4px solid #ff0000;
-            box-sizing: border-box;
-            transform: rotate(-2deg) scale(1.05);
-            text-shadow: 3px 3px #000;
-            pointer-events: none; 
-            letter-spacing: 1px;
-            box-shadow: 0 0 15px #ff0000;
-            animation: pulse-glow 1.5s infinite ease-in-out;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { background: rgba(255, 0, 0, 0.2); box-shadow: 0 0 10px #ff0000; }
-            50% { background: rgba(255, 0, 0, 0.4); box-shadow: 0 0 25px #ff0000; transform: rotate(1deg) scale(1.08); }
-        }
-
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            flex-direction: column;
+            gap: 15px;
             width: 100%;
-            max-width: 600px;
-            max-height: 420px;
+            max-width: 450px;
+            max-height: 400px;
             overflow-y: auto;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.85);
-            border-radius: 12px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.7);
+            border: 4px solid #ffff00;
         }
 
         .shop-item {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 15px;
-            border-radius: 10px;
-            border: 3px solid #fff;
-            box-sizing: border-box;
-            transition: transform 0.2s;
+            background: #fff;
+            border: 4px solid #000;
+            padding: 10px;
+            color: #000;
+            box-shadow: 6px 6px 0px #ff0000;
+            margin-bottom: 5px;
         }
 
-        .shop-item:hover {
-            transform: scale(1.02);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .shop-item.equipped {
-            border-color: #64ffda;
-            background: rgba(100, 255, 218, 0.1);
-        }
-
-        .shop-preview-container {
-            width: 100px;
-            height: 100px;
+        .shop-preview-circle {
+            width: 70px;
+            height: 70px;
+            background: #eee;
+            border: 3px solid #000;
+            border-radius: 0%; /* Keeps the "ticket" look */
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 8px;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            margin-bottom: 12px;
-            overflow: hidden;
+            margin-right: 15px;
+            flex-shrink: 0;
         }
 
         .shop-item-preview {
-            max-width: 90px;
-            max-height: 90px;
-            object-fit: contain;
-            image-rendering: pixelated;
+            max-width: 60px;
+            max-height: 60px;
+        }
+
+        .shop-item-details {
+            flex-grow: 1;
+            text-align: left;
         }
 
         .shop-item-name {
             font-weight: bold;
             font-size: 18px;
-            color: #ffff00;
-            margin-bottom: 4px;
-            text-shadow: 2px 2px #000;
+            text-transform: uppercase;
         }
 
         .shop-item-cost {
-            font-size: 15px;
-            color: #ffd700;
-            margin-bottom: 12px;
+            font-size: 16px;
+            color: #d32f2f;
             font-weight: bold;
-            text-shadow: 1px 1px #000;
         }
 
-        .code-box {
-            margin-top: 15px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 12px;
-            border: 3px dashed #ffff00;
-            border-radius: 8px;
-            color: white;
-        }
-
-        .code-input {
-            font-family: inherit;
-            font-size: 18px;
-            padding: 6px;
-            text-align: center;
-            border: 2px solid black;
-            text-transform: uppercase;
-            width: 180px;
-            color: black;
-            user-select: text !important;
-        }
-
-        #game-container {
-            display: none; 
-            width: 100vw;
-            height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 10;
-        }
-
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        #game-ui {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: yellow;
-            font-size: 28px;
-            text-shadow: 3px 3px black;
-            z-index: 15;
-        }
-
-        #esc-prompt {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 14px;
-            background: rgba(0,0,0,0.6);
-            padding: 6px 12px;
-            border: 2px solid white;
-            z-index: 15;
-        }
-
+        /* --- REST OF GAME UI --- */
+        #game-container { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 10; }
+        canvas { display: block; width: 100%; height: 100%; }
+        #game-ui { position: absolute; top: 20px; left: 20px; color: yellow; font-size: 28px; text-shadow: 3px 3px black; z-index: 15; }
+        #esc-prompt { position: absolute; top: 20px; right: 20px; color: white; font-size: 14px; background: rgba(0,0,0,0.6); padding: 6px 12px; border: 2px solid white; z-index: 15; }
+        
         .school-announcement {
-            position: fixed;
-            top: -120px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 600px;
-            background-color: #ffff00;
-            color: #000;
-            border: 5px solid #000;
-            box-shadow: 8px 8px 0px #000;
-            padding: 15px 25px;
-            box-sizing: border-box;
-            z-index: 100;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: fixed; top: -120px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px;
+            background-color: #ffff00; color: #000; border: 5px solid #000; box-shadow: 8px 8px 0px #000; padding: 15px 25px;
+            z-index: 100; text-align: center; font-size: 20px; font-weight: bold; transition: top 0.4s;
         }
-
-        .school-announcement.active {
-            top: 20px;
-        }
-
-        .announcement-header {
-            color: #ff0000;
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
+        .school-announcement.active { top: 20px; }
     </style>
 </head>
 <body>
 
     <div id="announcement-banner" class="school-announcement">
-        <div class="announcement-header">Admin announcement</div>
-        <div id="announcement-text">yes</div>
+        <div id="announcement-text">Welcome to St Joseph's</div>
     </div>
 
     <div id="game-menu" class="menu-screen">
-        <div class="title-container">
-            <h1>
-                <span class="letter-e-wrapper">
-                    <img src="character.png" alt="Character" class="menu-avatar-sticker">E
-                </span>scape St Joseph's
-            </h1>
-        </div>
+        <h1>ESCAPE ST JOSEPH'S</h1>
         <div class="coin-counter" id="menu-coin-display">Coins: 0</div>
         <div class="menu-buttons">
             <button class="btn" onclick="startGame()">START GAME</button>
-            <button class="btn" style="background: #ffd700;" onclick="toggleShop(true)">CHARACTER SHOP</button>
-            
-            <div class="btn-wrapper">
-                <button class="btn disabled" style="width:100%; opacity: 0.6; background: #222; color: #555; border-color: #444;" disabled>MULTIPLAYER</button>
-                <div class="soon-overlay">MULTIPLAYER (SOON!)</div>
-            </div>
-
-            <button class="btn" onclick="toggleOptions(true)">OPTIONS & CODES</button>
-            <button class="btn" onclick="alert('Find 7 notebooks and avoid the teacher!\n\nChromebook: WASD or Arrows to walk, trackpad to look around.\nPC: WASD to walk, Mouse to look around.\n\nClick game screen to lock view look!')">HOW TO PLAY</button>
+            <button class="btn" style="background: #ffd700;" onclick="toggleShop(true)">OPEN SHOP</button>
+            <button class="btn" onclick="toggleOptions(true)">OPTIONS</button>
+            <button class="btn" onclick="alert('Find 7 notebooks and avoid the teacher!')">HOW TO PLAY</button>
         </div>
-    </div>
-
-    <div id="options-menu" class="menu-screen">
-        <h2>School Settings</h2>
-        <div class="menu-buttons">
-            <button class="btn" id="control-toggle" onclick="toggleControlMode()">Device Mode: Chromebook Default</button>
-            <button class="btn" id="speed-toggle" onclick="toggleChromebookMode()">Performance: Standard</button>
-        </div>
-
-        <div class="code-box">
-            <h3>Enter Code:</h3>
-            <input type="text" id="cheatCodeField" class="code-input" placeholder="ENTER CODE...">
-            <br><br>
-            <button class="btn" style="font-size:16px; padding:6px 12px;" onclick="checkCheatCode()">Submit Code</button>
-        </div>
-        <br>
-        <button class="btn" style="background: #ff0000; color: white;" onclick="toggleOptions(false)">BACK TO MENU</button>
     </div>
 
     <div id="shop-menu" class="menu-screen">
-        <h2>Monster Customization</h2>
+        <h2>CHARACTER SHOP</h2>
         <div class="coin-counter" id="shop-coin-display">Coins: 0</div>
-        
-        <div class="shop-grid" id="shop-items-container">
-        </div>
-        
+        <div class="shop-list" id="shop-items-container"></div>
         <br>
-        <button class="btn" style="background: #ff0000; color: white; width: 100%; max-width: 250px;" onclick="toggleShop(false)">BACK TO MENU</button>
+        <button class="btn" style="background: #ff0000; color: white;" onclick="toggleShop(false)">CLOSE SHOP</button>
+    </div>
+
+    <div id="options-menu" class="menu-screen">
+        <h2>SETTINGS</h2>
+        <div class="menu-buttons">
+            <button class="btn" id="control-toggle" onclick="toggleControlMode()">Mode: Chromebook</button>
+            <button class="btn" onclick="userCoins += 10; updateCoinDisplays()">Cheat: +10 Coins</button>
+        </div>
+        <br>
+        <button class="btn" style="background: #ff0000; color: white;" onclick="toggleOptions(false)">BACK</button>
     </div>
 
     <div id="game-container">
         <div id="game-ui">Notebooks: 0/7</div>
-        <div id="esc-prompt">Click screen to lock camera look | ESC to main menu</div>
+        <div id="esc-prompt">ESC to quit</div>
         <canvas id="gameCanvas"></canvas>
     </div>
 
@@ -403,40 +225,85 @@
     <script>
         const SUPABASE_URL = "https://jspotbqoqqpkqtnaqyqc.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU";
-
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        supabaseClient
-            .channel('schema-db-changes')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'announcements' }, (payload) => {
-                if (payload.new && payload.new.message) {
-                    triggerAnnouncement(payload.new.message, 5000);
-                }
-            })
-            .subscribe();
+        // --- GAME LOGIC ---
+        let userCoins = parseInt(localStorage.getItem('st_joes_coins')) || 0;
+        let ownedSkins = JSON.parse(localStorage.getItem('st_joes_skins')) || ['default'];
+        let equippedSkin = localStorage.getItem('st_joes_equipped') || 'default';
 
-        let musicStarted = false;
-        function playMusic() {
-            if(!musicStarted) {
-                const audio = document.getElementById('baldiAudio');
-                audio.play().catch((err)=>{ console.log("Audio play blocked until click:", err) });
-                musicStarted = true;
+        const shopCatalog = [
+            { id: 'default', name: 'Default Baldi', cost: 0, src: 'character.png' },
+            { id: 'rage', name: 'Rage Principal', cost: 50, src: 'image_6fdf31.png' },
+            { id: 'shadow', name: 'Shadow Teacher', cost: 100, src: 'image_6fdb0b.png' },
+            { id: 'cyborg', name: 'Robo-Overseer', cost: 200, src: 'image_6fdeeb.png' }
+        ];
+
+        function updateCoinDisplays() {
+            document.getElementById('menu-coin-display').innerText = `Coins: ${userCoins}`;
+            document.getElementById('shop-coin-display').innerText = `Coins: ${userCoins}`;
+            localStorage.setItem('st_joes_coins', userCoins);
+        }
+
+        function toggleShop(show) {
+            document.getElementById('game-menu').style.display = show ? 'none' : 'flex';
+            document.getElementById('shop-menu').style.display = show ? 'flex' : 'none';
+            if(show) renderShop();
+        }
+
+        function toggleOptions(show) {
+            document.getElementById('game-menu').style.display = show ? 'none' : 'flex';
+            document.getElementById('options-menu').style.display = show ? 'flex' : 'none';
+        }
+
+        function renderShop() {
+            const container = document.getElementById('shop-items-container');
+            container.innerHTML = '';
+            shopCatalog.forEach(item => {
+                const isOwned = ownedSkins.includes(item.id);
+                const isEquipped = equippedSkin === item.id;
+                
+                let btnColor = isEquipped ? "#64ffda" : (isOwned ? "#a910ff" : "#ffd700");
+                let btnText = isEquipped ? "EQUIPPED" : (isOwned ? "EQUIP" : "BUY");
+                let btnTxtCol = isOwned && !isEquipped ? "white" : "black";
+
+                container.innerHTML += `
+                    <div class="shop-item">
+                        <div class="shop-preview-circle">
+                            <img src="${item.src}" class="shop-item-preview">
+                        </div>
+                        <div class="shop-item-details">
+                            <div class="shop-item-name">${item.name}</div>
+                            <div class="shop-item-cost">${isOwned ? 'Unlocked' : item.cost + ' Coins'}</div>
+                        </div>
+                        <button class="btn" style="background:${btnColor}; color:${btnTxtCol}; font-size:14px; box-shadow:3px 3px 0px #000;" 
+                                onclick="handleShopClick('${item.id}', ${item.cost})">${btnText}</button>
+                    </div>
+                `;
+            });
+        }
+
+        function handleShopClick(id, cost) {
+            if (ownedSkins.includes(id)) {
+                equippedSkin = id;
+                localStorage.setItem('st_joes_equipped', id);
+                nextbotImg.src = shopCatalog.find(s => s.id === id).src;
+            } else if (userCoins >= cost) {
+                userCoins -= cost;
+                ownedSkins.push(id);
+                localStorage.setItem('st_joes_skins', JSON.stringify(ownedSkins));
+                updateCoinDisplays();
+            } else {
+                alert("Too poor! Find more notebooks.");
             }
+            renderShop();
         }
 
-        function triggerAnnouncement(message, duration = 4000) {
-            const banner = document.getElementById('announcement-banner');
-            const txt = document.getElementById('announcement-text');
-            txt.innerText = message;
-            banner.classList.add('active');
-
-            setTimeout(() => {
-                banner.classList.remove('active');
-            }, duration);
-        }
-
+        // --- CORE ENGINE (MINIFIED/FIXED COLLISION) ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const nextbotImg = new Image();
+        nextbotImg.src = shopCatalog.find(s => s.id === equippedSkin).src;
 
         let schoolMap = [
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -456,517 +323,120 @@
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         ];
 
-        const mapWidth = 20;
-        const mapHeight = 15;
-
-        let player = {
-            x: 1.5,     
-            y: 1.5,
-            dirX: -1,   
-            dirY: 0,
-            planeX: 0,  
-            planeY: 0.66,
-            moveSpeed: 0.07,
-            rotSpeed: 0.04,
-            mouseSensitivity: 0.0025
-        };
-
-        let userCoins = parseInt(localStorage.getItem('st_joes_coins')) || 0;
-        let ownedSkins = JSON.parse(localStorage.getItem('st_joes_skins')) || ['default'];
-        let equippedSkin = localStorage.getItem('st_joes_equipped') || 'default';
-
-        const shopCatalog = [
-            { id: 'default', name: 'Default Teacher', cost: 0, src: 'character.png' },
-            { id: 'evil_red', name: 'Mathematics Teacher', cost: 50, src: 'image_6fdf31.png' },
-            { id: 'shadow', name: 'Principal', cost: 100, src: 'image_6fdb0b.png' },
-        ];
-
-        const nextbotImg = new Image();
-        function updateMonsterTexture() {
-            let current = shopCatalog.find(s => s.id === equippedSkin) || shopCatalog[0];
-            nextbotImg.src = current.src;
-        }
-        updateMonsterTexture();
-
-        let nextbot = { x: 18.5, y: 13.5, speed: 0.042, radius: 0.25 };
-
+        let player = { x: 1.5, y: 1.5, dirX: -1, dirY: 0, planeX: 0, planeY: 0.66, moveSpeed: 0.07, mouseSensitivity: 0.0025 };
+        let nextbot = { x: 18.5, y: 13.5, speed: 0.043, radius: 0.25 };
         let notebooks = [];
-        function resetNotebooks() {
-            notebooks = [
-                { x: 1.5, y: 13.5, collected: false },
-                { x: 8.5, y: 1.5, collected: false },
-                { x: 5.5, y: 7.5, collected: false },
-                { x: 12.5, y: 5.5, collected: false },
-                { x: 18.5, y: 1.5, collected: false },
-                { x: 10.5, y: 10.5, collected: false },
-                { x: 14.5, y: 12.5, collected: false }
-            ];
-            notebooksCollected = 0;
-            document.getElementById('game-ui').innerText = `Notebooks: 0/7`;
-        }
-
+        let gameRunning = false;
         let keys = {};
         let notebooksCollected = 0;
-        let gameOver = false;
-        let gameRunning = false;
-        let chromebookMode = false; 
-        let deviceSetting = "chromebook"; 
+        let FOV_Rays = 400;
 
-        let FOV_Rays = 400; 
-
-        function updateCoinDisplays() {
-            document.getElementById('menu-coin-display').innerText = `Coins: ${userCoins}`;
-            document.getElementById('shop-coin-display').innerText = `Coins: ${userCoins}`;
-            localStorage.setItem('st_joes_coins', userCoins);
-        }
-        updateCoinDisplays();
-
-        window.addEventListener('resize', resizeCanvas);
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        function toggleOptions(show) {
-            document.getElementById('game-menu').style.display = show ? 'none' : 'flex';
-            document.getElementById('options-menu').style.display = show ? 'flex' : 'none';
-        }
-
-        function toggleShop(show) {
-            document.getElementById('game-menu').style.display = show ? 'none' : 'flex';
-            document.getElementById('shop-menu').style.display = show ? 'flex' : 'none';
-            if (show) renderShop();
-        }
-
-        function renderShop() {
-            const container = document.getElementById('shop-items-container');
-            container.innerHTML = '';
-            
-            shopCatalog.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'shop-item';
-
-                const isOwned = ownedSkins.includes(item.id);
-                const isEquipped = equippedSkin === item.id;
-
-                if (isEquipped) {
-                    itemDiv.classList.add('equipped');
+        function checkWall(x, y, r) {
+            for(let ox=-r; ox<=r; ox+=r*2) {
+                for(let oy=-r; oy<=r; oy+=r*2) {
+                    if(schoolMap[Math.floor(y+oy)][Math.floor(x+ox)] === 1) return true;
                 }
-
-                let actionBtnHtml = '';
-                if (isEquipped) {
-                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:6px 12px; background:#64ffda; box-shadow: 2px 2px 0px #111;" onclick="unequipSkin('${item.id}')">UNEQUIP</button>`;
-                } else if (isOwned) {
-                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:6px 12px; background:#a910ff; color:white; box-shadow: 2px 2px 0px #111;" onclick="equipSkin('${item.id}')">EQUIP</button>`;
-                } else {
-                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:6px 12px; background:#ffd700; box-shadow: 2px 2px 0px #111;" onclick="buySkin('${item.id}', ${item.cost})">BUY</button>`;
-                }
-
-                itemDiv.innerHTML = `
-                    <div class="shop-preview-container">
-                        <img src="${item.src}" alt="${item.name}" class="shop-item-preview">
-                    </div>
-                    <div class="shop-item-name">${item.name}</div>
-                    <div class="shop-item-cost">${isOwned ? (isEquipped ? 'Active' : 'Unlocked') : item.cost + ' Coins'}</div>
-                    <div>${actionBtnHtml}</div>
-                `;
-                container.appendChild(itemDiv);
-            });
-        }
-
-        function buySkin(id, cost) {
-            if (userCoins >= cost) {
-                userCoins -= cost;
-                ownedSkins.push(id);
-                localStorage.setItem('st_joes_skins', JSON.stringify(ownedSkins));
-                updateCoinDisplays();
-                renderShop();
-                triggerAnnouncement("New skin purchased!");
-            } else {
-                alert("Not enough coins!");
-            }
-        }
-
-        function equipSkin(id) {
-            equippedSkin = id;
-            localStorage.setItem('st_joes_equipped', equippedSkin);
-            updateMonsterTexture();
-            renderShop();
-        }
-
-        function unequipSkin(id) {
-            equippedSkin = 'default';
-            localStorage.setItem('st_joes_equipped', equippedSkin);
-            updateMonsterTexture();
-            renderShop();
-        }
-
-        function toggleControlMode() {
-            if (deviceSetting === "chromebook") {
-                deviceSetting = "pc";
-                player.mouseSensitivity = 0.0012; 
-                document.getElementById('control-toggle').innerText = "Device Mode: Keyboard & Mouse";
-                triggerAnnouncement("Controls switched to standard PC!");
-            } else {
-                deviceSetting = "chromebook";
-                player.mouseSensitivity = 0.0032; 
-                document.getElementById('control-toggle').innerText = "Device Mode: Chromebook Default";
-                triggerAnnouncement("Controls optimized for Chromebook tracking!");
-            }
-        }
-
-        function toggleChromebookMode() {
-            chromebookMode = !chromebookMode;
-            if(chromebookMode) {
-                FOV_Rays = 180; 
-                player.moveSpeed = 0.09; 
-                document.getElementById('speed-toggle').innerText = "Performance: Chromebook Boost";
-                document.getElementById('speed-toggle').style.background = "#DEFF9A";
-                triggerAnnouncement("Performance Boost Activated!");
-            } else {
-                FOV_Rays = 400;
-                player.moveSpeed = 0.07;
-                document.getElementById('speed-toggle').innerText = "Performance: Standard";
-                document.getElementById('speed-toggle').style.background = "#fff";
-                triggerAnnouncement("Standard Graphics Restored.");
-            }
-        }
-
-        function checkCheatCode() {
-            let entry = document.getElementById('cheatCodeField').value.trim().toUpperCase();
-            if(entry === "GOOSHOES" || entry === "53045") {
-                player.moveSpeed = 0.15;
-                triggerAnnouncement("SPEED CHEAT UNLOCKED!");
-            } else if(entry === "TELEPORT" || entry === "31718") {
-                player.x = 9.5;
-                player.y = 5.5;
-                triggerAnnouncement("TELEPORT CHEAT UNLOCKED!");
-            } else if(entry === "RICH") {
-                userCoins += 100;
-                updateCoinDisplays();
-                triggerAnnouncement("+100 FREE COINS!");
-            } else {
-                triggerAnnouncement("Invalid Cheat Code!");
-            }
-            document.getElementById('cheatCodeField').value = "";
-        }
-
-        function stopGameAndReturn() {
-            gameRunning = false;
-            window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener('keyup', handleKeyUp);
-            document.exitPointerLock?.();
-            document.getElementById('game-container').style.display = 'none';
-            document.getElementById('game-menu').style.display = 'flex';
-            updateCoinDisplays();
-        }
-
-        function startGame() {
-            playMusic();
-            resetNotebooks();
-            gameOver = false;
-            gameRunning = true;
-            
-            player.x = 1.5;
-            player.y = 1.5;
-            nextbot.x = 18.5;
-            nextbot.y = 13.5;
-
-            document.getElementById('game-menu').style.display = 'none';
-            document.getElementById('game-container').style.display = 'block';
-            
-            resizeCanvas();
-
-            window.addEventListener('keydown', handleKeyDown);
-            window.addEventListener('keyup', handleKeyUp);
-            
-            setTimeout(() => {
-                if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                    canvas.requestPointerLock?.();
-                }
-            }, 100);
-
-            canvas.addEventListener('click', (e) => {
-                if (gameRunning) canvas.requestPointerLock?.();
-            });
-            document.addEventListener('mousemove', handleMouseMove);
-
-            triggerAnnouncement("Find all 7 notebooks!", 5000);
-            gameLoop();
-        }
-
-        document.addEventListener('pointerlockchange', () => {
-            if (document.pointerLockElement !== canvas && gameRunning) {
-                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-                    return; 
-                }
-            }
-        });
-
-        function handleMouseMove(e) {
-            if (!gameRunning || document.pointerLockElement !== canvas) return;
-
-            let movementX = e.movementX || 0;
-            let rotAngle = -movementX * player.mouseSensitivity;
-
-            let oldDirX = player.dirX;
-            player.dirX = player.dirX * Math.cos(rotAngle) - player.dirY * Math.sin(rotAngle);
-            player.dirY = oldDirX * Math.sin(rotAngle) + player.dirY * Math.cos(rotAngle);
-            
-            let oldPlaneX = player.planeX;
-            player.planeX = player.planeX * Math.cos(rotAngle) - player.planeY * Math.sin(rotAngle);
-            player.planeY = oldPlaneX * Math.sin(rotAngle) + player.planeY * Math.cos(rotAngle);
-        }
-
-        function handleKeyDown(e) {
-            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-                return;
-            }
-
-            if (e.key === "Escape") {
-                stopGameAndReturn();
-                return;
-            }
-            keys[e.key.toLowerCase()] = true; 
-        }
-        function handleKeyUp(e) { 
-            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-                return;
-            }
-            keys[e.key.toLowerCase()] = false;
-        }
-
-        function checkWallCollision(x, y, radius) {
-            let checkPoints = [
-                {x: x - radius, y: y - radius},
-                {x: x + radius, y: y - radius},
-                {x: x - radius, y: y + radius},
-                {x: x + radius, y: y + radius},
-                {x: x, y: y - radius},
-                {x: x, y: y + radius},
-                {x: x - radius, y: y},
-                {x: x + radius, y: y}
-            ];
-            for (let p of checkPoints) {
-                let gx = Math.floor(p.x);
-                let gy = Math.floor(p.y);
-                if (gx < 0 || gx >= mapWidth || gy < 0 || gy >= mapHeight) return true;
-                if (schoolMap[gy][gx] === 1) return true;
             }
             return false;
         }
 
+        function startGame() {
+            document.getElementById('baldiAudio').play().catch(()=>{});
+            gameRunning = true;
+            notebooks = [{x:1.5,y:13.5},{x:8.5,y:1.5},{x:5.5,y:7.5},{x:12.5,y:5.5},{x:18.5,y:1.5},{x:10.5,y:10.5},{x:14.5,y:12.5}];
+            notebooksCollected = 0;
+            player.x = 1.5; player.y = 1.5;
+            nextbot.x = 18.5; nextbot.y = 13.5;
+            document.getElementById('game-menu').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            canvas.requestPointerLock();
+            gameLoop();
+        }
+
+        window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+        document.addEventListener('mousemove', e => {
+            if(document.pointerLockElement !== canvas) return;
+            let rot = -e.movementX * player.mouseSensitivity;
+            let oldDX = player.dirX;
+            player.dirX = player.dirX * Math.cos(rot) - player.dirY * Math.sin(rot);
+            player.dirY = oldDX * Math.sin(rot) + player.dirY * Math.cos(rot);
+            let oldPX = player.planeX;
+            player.planeX = player.planeX * Math.cos(rot) - player.planeY * Math.sin(rot);
+            player.planeY = oldPX * Math.sin(rot) + player.planeY * Math.cos(rot);
+        });
+
         function update() {
-            if (gameOver || !gameRunning) return;
-
-            let moveXDir = 0;
-            let moveYDir = 0;
-
-            if (keys['w'] || keys['arrowup']) {
-                moveXDir += player.dirX;
-                moveYDir += player.dirY;
-            }
-            if (keys['s'] || keys['arrowdown']) {
-                moveXDir -= player.dirX;
-                moveYDir -= player.dirY;
-            }
-            if (keys['a'] || keys['arrowleft']) {
-                moveXDir -= player.dirY; 
-                moveYDir += player.dirX;
-            }
-            if (keys['d'] || keys['arrowright']) {
-                moveXDir += player.dirY;
-                moveYDir -= player.dirX;
+            let mx = 0, my = 0;
+            if(keys['w']) { mx += player.dirX; my += player.dirY; }
+            if(keys['s']) { mx -= player.dirX; my -= player.dirY; }
+            if(keys['a']) { mx -= player.dirY; my += player.dirX; }
+            if(keys['d']) { mx += player.dirY; my -= player.dirX; }
+            if(mx||my) {
+                let len = Math.sqrt(mx*mx+my*my);
+                let sx = (mx/len)*player.moveSpeed, sy = (my/len)*player.moveSpeed;
+                if(!checkWall(player.x+sx, player.y, 0.2)) player.x+=sx;
+                if(!checkWall(player.x, player.y+sy, 0.2)) player.y+=sy;
             }
 
-            if (moveXDir !== 0 || moveYDir !== 0) {
-                let length = Math.sqrt(moveXDir * moveXDir + moveYDir * moveYDir);
-                let stepX = (moveXDir / length) * player.moveSpeed;
-                let stepY = (moveYDir / length) * player.moveSpeed;
-
-                if (!checkWallCollision(player.x + stepX, player.y, 0.2)) player.x += stepX;
-                if (!checkWallCollision(player.x, player.y + stepY, 0.2)) player.y += stepY;
+            let dx = player.x - nextbot.x, dy = player.y - nextbot.y, dist = Math.sqrt(dx*dx+dy*dy);
+            if(dist > 0.3) {
+                let bx = (dx/dist)*nextbot.speed, by = (dy/dist)*nextbot.speed;
+                if(!checkWall(nextbot.x+bx, nextbot.y, nextbot.radius)) nextbot.x += bx;
+                if(!checkWall(nextbot.x, nextbot.y+by, nextbot.radius)) nextbot.y += by;
+            } else {
+                gameRunning = false; alert("Caught!"); location.reload();
             }
 
-            let dx = player.x - nextbot.x;
-            let dy = player.y - nextbot.y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance > 0) {
-                let stepX = (dx / distance) * nextbot.speed;
-                let stepY = (dy / distance) * nextbot.speed;
-
-                if (!checkWallCollision(nextbot.x + stepX, nextbot.y, nextbot.radius)) {
-                    nextbot.x += stepX;
-                }
-                if (!checkWallCollision(nextbot.x, nextbot.y + stepY, nextbot.radius)) {
-                    nextbot.y += stepY;
-                }
-            }
-
-            if (distance < 0.35) {
-                gameOver = true;
-                alert("CAUGHT BY THE TEACHER!");
-                stopGameAndReturn();
-                return;
-            }
-
-            notebooks.forEach((nb) => {
-                if (!nb.collected) {
-                    let nDist = Math.sqrt(Math.pow(player.x - nb.x, 2) + Math.pow(player.y - nb.y, 2));
-                    if (nDist < 0.4) {
-                        nb.collected = true;
-                        notebooksCollected++;
-                        document.getElementById('game-ui').innerText = `Notebooks: ${notebooksCollected}/7`;
-                        triggerAnnouncement(`You picked up a notebook! (${notebooksCollected}/7)`);
-
-                        if (notebooksCollected === 7) {
-                            userCoins += 50;
-                            alert("YOU ESCAPED ST JOSEPH'S!\nEarned 50 Coins!");
-                            stopGameAndReturn();
-                        }
-                    }
+            notebooks.forEach((n,i) => {
+                if(Math.sqrt((player.x-n.x)**2+(player.y-n.y)**2) < 0.4) {
+                    notebooks.splice(i,1); notebooksCollected++;
+                    document.getElementById('game-ui').innerText = `Notebooks: ${notebooksCollected}/7`;
+                    if(notebooksCollected===7){ userCoins+=50; alert("Escaped! +50 Coins"); location.reload(); }
                 }
             });
+            if(keys['escape']) location.reload();
         }
 
         function draw() {
-            ctx.fillStyle = '#0a0512'; 
-            ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
-            ctx.fillStyle = '#1c1c1c'; 
-            ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
-
-            let w = canvas.width;
-            let h = canvas.height;
-            let step = w / FOV_Rays;
-            let zBuffer = [];
-
-            for (let i = 0; i < FOV_Rays; i++) {
-                let cameraX = 2 * (i * step) / w - 1;
-                let rayDirX = player.dirX + player.planeX * cameraX;
-                let rayDirY = player.dirY + player.planeY * cameraX;
-
-                let mapX = Math.floor(player.x);
-                let mapY = Math.floor(player.y);
-
-                let sideDistX, sideDistY;
-                let deltaDistX = Math.abs(1 / rayDirX);
-                let deltaDistY = Math.abs(1 / rayDirY);
-                let perpWallDist;
-
-                let stepX, stepY;
-                let hit = 0;
-                let side;
-
-                if (rayDirX < 0) {
-                    stepX = -1;
-                    sideDistX = (player.x - mapX) * deltaDistX;
-                } else {
-                    stepX = 1;
-                    sideDistX = (mapX + 1.0 - player.x) * deltaDistX;
-                }
-                if (rayDirY < 0) {
-                    stepY = -1;
-                    sideDistY = (player.y - mapY) * deltaDistY;
-                } else {
-                    stepY = 1;
-                    sideDistY = (mapY + 1.0 - player.y) * deltaDistY;
-                }
-
-                while (hit === 0) {
-                    if (sideDistX < sideDistY) {
-                        sideDistX += deltaDistX;
-                        mapX += stepX;
-                        side = 0;
-                    } else {
-                        sideDistY += deltaDistY;
-                        mapY += stepY;
-                        side = 1;
-                    }
-                    if (schoolMap[mapY][mapX] === 1) hit = 1;
-                }
-
-                if (side === 0) perpWallDist = (mapX - player.x + (1 - stepX) / 2) / rayDirX;
-                else perpWallDist = (mapY - player.y + (1 - stepY) / 2) / rayDirY;
-
-                zBuffer[i] = perpWallDist;
-
-                let lineHeight = Math.floor(h / perpWallDist);
-                let drawStart = -lineHeight / 2 + h / 2;
-                let drawEnd = lineHeight / 2 + h / 2;
-
-                let baseColor = (side === 1) ? 60 : 40;
-                let shadowFactor = Math.min(1, 3 / perpWallDist); 
-                ctx.fillStyle = `rgb(${baseColor * shadowFactor}, ${10 * shadowFactor}, ${15 * shadowFactor})`;
-                ctx.fillRect(Math.floor(i * step), drawStart, Math.ceil(step) + 1, drawEnd - drawStart);
+            ctx.fillStyle = '#0a0512'; ctx.fillRect(0,0,canvas.width,canvas.height/2);
+            ctx.fillStyle = '#1c1c1c'; ctx.fillRect(0,canvas.height/2,canvas.width,canvas.height/2);
+            let zBuf = [];
+            for(let i=0; i<FOV_Rays; i++) {
+                let camX = 2*i/FOV_Rays-1, rDX = player.dirX+player.planeX*camX, rDY = player.dirY+player.planeY*camX;
+                let mX = Math.floor(player.x), mY = Math.floor(player.y);
+                let dX = Math.abs(1/rDX), dY = Math.abs(1/rDY), sX, sY, sdX, sdY;
+                if(rDX<0){ sX=-1; sdX=(player.x-mX)*dX; } else { sX=1; sdX=(mX+1-player.x)*dX; }
+                if(rDY<0){ sY=-1; sdY=(player.y-mY)*dY; } else { sY=1; sdY=(mY+1-player.y)*dY; }
+                let side; while(schoolMap[mY][mX]!==1) { if(sdX<sdY){ sdX+=dX; mX+=sX; side=0; } else { sdY+=dY; mY+=sY; side=1; } }
+                let dist = side===0 ? (mX-player.x+(1-sX)/2)/rDX : (mY-player.y+(1-sY)/2)/rDY;
+                zBuf[i] = dist;
+                let lh = Math.floor(canvas.height/dist);
+                let shad = Math.min(1, 3/dist);
+                ctx.fillStyle = `rgb(${(side?60:40)*shad},${10*shad},${15*shad})`;
+                ctx.fillRect(i*(canvas.width/FOV_Rays), -lh/2+canvas.height/2, (canvas.width/FOV_Rays)+1, lh);
             }
-
-            let itemsToRender = [];
-
-            notebooks.forEach((nb) => {
-                if (!nb.collected) {
-                    itemsToRender.push({ x: nb.x, y: nb.y, type: 'notebook' });
-                }
-            });
-
-            itemsToRender.push({ x: nextbot.x, y: nextbot.y, type: 'teacher' });
-
-            itemsToRender.sort((a, b) => {
-                let distA = Math.pow(player.x - a.x, 2) + Math.pow(player.y - a.y, 2);
-                let distB = Math.pow(player.x - b.x, 2) + Math.pow(player.y - b.y, 2);
-                return distB - distA;
-            });
-
-            itemsToRender.forEach((item) => {
-                let spriteX = item.x - player.x;
-                let spriteY = item.y - player.y;
-
-                let invDet = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
-                let transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
-                let transformY = invDet * (-player.planeY * spriteX + player.planeX * spriteY);
-
-                if (transformY > 0.1) {
-                    let spriteScreenX = Math.floor((w / 2) * (1 + transformX / transformY));
-                    let spriteHeight = Math.abs(Math.floor(h / transformY));
-                    let spriteWidth = spriteHeight * 0.6;
-
-                    let drawStartX = Math.floor(spriteScreenX - spriteWidth / 2);
-                    let drawStartY = Math.floor(-spriteHeight / 2 + h / 2);
-
-                    let centerRay = Math.floor((spriteScreenX / w) * FOV_Rays);
-                    if (centerRay >= 0 && centerRay < FOV_Rays && transformY < zBuffer[centerRay]) {
-                        if (item.type === 'teacher') {
-                            ctx.drawImage(nextbotImg, drawStartX, drawStartY, spriteWidth, spriteHeight);
-                        } else if (item.type === 'notebook') {
-                            let hoverOffset = Math.sin(Date.now() * 0.005) * 15;
-                            ctx.fillStyle = '#00ffff';
-                            ctx.strokeStyle = '#000';
-                            ctx.lineWidth = 3;
-                            
-                            let boxW = spriteWidth * 0.5;
-                            let boxH = spriteHeight * 0.4;
-                            let boxX = spriteScreenX - boxW / 2;
-                            let boxY = (h / 2) - (boxH / 2) + hoverOffset;
-
-                            ctx.fillRect(boxX, boxY, boxW, boxH);
-                            ctx.strokeRect(boxX, boxY, boxW, boxH);
-
-                            ctx.fillStyle = '#fff';
-                            ctx.fillRect(boxX + 4, boxY + 4, boxW - 8, boxH - 8);
-                            ctx.fillStyle = '#ff0000';
-                            ctx.fillRect(boxX + 2, boxY + 2, 3, boxH - 4);
+            
+            let sprites = [...notebooks.map(n=>({x:n.x,y:n.y,t:'n'})), {x:nextbot.x,y:nextbot.y,t:'m'}];
+            sprites.sort((a,b)=>((player.x-b.x)**2+(player.y-b.y)**2) - ((player.x-a.x)**2+(player.y-a.y)**2));
+            sprites.forEach(s => {
+                let sx = s.x-player.x, sy = s.y-player.y, det = 1/(player.planeX*player.dirY-player.dirX*player.planeY);
+                let tX = det*(player.dirY*sx-player.dirX*sy), tY = det*(-player.planeY*sx+player.planeX*sy);
+                if(tY > 0.1) {
+                    let sScX = Math.floor((canvas.width/2)*(1+tX/tY)), sh = Math.abs(Math.floor(canvas.height/tY)), sw = sh*0.6;
+                    if(tY < zBuf[Math.floor((sScX/canvas.width)*FOV_Rays)]) {
+                        if(s.t==='m') ctx.drawImage(nextbotImg, sScX-sw/2, -sh/2+canvas.height/2, sw, sh);
+                        else {
+                            ctx.fillStyle='#0ff'; ctx.fillRect(sScX-sw/4, -sh/4+canvas.height/2+(Math.sin(Date.now()*0.005)*15), sw/2, sh/3);
                         }
                     }
                 }
             });
         }
 
-        function gameLoop() {
-            if (!gameRunning) return;
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
+        function gameLoop() { if(!gameRunning) return; update(); draw(); requestAnimationFrame(gameLoop); }
+        updateCoinDisplays();
     </script>
 </body>
 </html>

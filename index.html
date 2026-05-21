@@ -40,17 +40,12 @@
             background-repeat: no-repeat;
         }
 
-        if-game-menu {
-            border: 10px solid #ff0000;
-            display: flex;
-        }
-
         #game-menu {
             border: 10px solid #ff0000;
             display: flex;
         }
 
-        #options-menu {
+        #options-menu, #shop-menu {
             display: none;
             border: 10px solid #ffff00;
             color: white;
@@ -59,7 +54,7 @@
         .title-container {
             position: relative;
             display: inline-block;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         h1 {
@@ -102,10 +97,18 @@
             -webkit-text-stroke: 1.5px black;
         }
 
+        .coin-counter {
+            font-size: 24px;
+            color: #ffd700;
+            text-shadow: 2px 2px #000;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
         .menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             width: 100%;
             max-width: 320px;
             background: rgba(0, 0, 0, 0.85);
@@ -118,8 +121,8 @@
             background-color: #ffffff;
             color: #000000;
             border: 4px solid #000;
-            padding: 12px 20px;
-            font-size: 22px;
+            padding: 10px 20px;
+            font-size: 20px;
             cursor: pointer;
             font-family: inherit;
             box-shadow: 5px 5px 0px #333;
@@ -165,10 +168,45 @@
             50% { background: rgba(255, 0, 0, 0.4); box-shadow: 0 0 25px #ff0000; transform: rotate(1deg) scale(1.08); }
         }
 
+        .shop-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid white;
+        }
+
+        .shop-item-info {
+            text-align: left;
+        }
+
+        .shop-item-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #ffff00;
+        }
+
+        .shop-item-cost {
+            font-size: 14px;
+            color: #ffd700;
+        }
+
         .code-box {
-            margin-top: 20px;
+            margin-top: 15px;
             background: rgba(0, 0, 0, 0.9);
-            padding: 15px;
+            padding: 12px;
             border: 3px dashed #ffff00;
             border-radius: 8px;
             color: white;
@@ -177,7 +215,7 @@
         .code-input {
             font-family: inherit;
             font-size: 18px;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
             border: 2px solid black;
             text-transform: uppercase;
@@ -272,8 +310,10 @@
                 </span>scape St Joseph's
             </h1>
         </div>
+        <div class="coin-counter" id="menu-coin-display">Coins: 0</div>
         <div class="menu-buttons">
             <button class="btn" onclick="startGame()">START GAME</button>
+            <button class="btn" style="background: #ffd700;" onclick="toggleShop(true)">CHARACTER SHOP</button>
             
             <div class="btn-wrapper">
                 <button class="btn disabled" style="width:100%; opacity: 0.6; background: #222; color: #555; border-color: #444;" disabled>MULTIPLAYER</button>
@@ -300,6 +340,17 @@
         </div>
         <br>
         <button class="btn" style="background: #ff0000; color: white;" onclick="toggleOptions(false)">BACK TO MENU</button>
+    </div>
+
+    <div id="shop-menu" class="menu-screen">
+        <h2>Monster Customization</h2>
+        <div class="coin-counter" id="shop-coin-display">Coins: 0</div>
+        <div class="menu-buttons" style="max-width: 400px;">
+            <div class="shop-grid" id="shop-items-container">
+            </div>
+            <br>
+            <button class="btn" style="background: #ff0000; color: white;" onclick="toggleShop(false)">BACK TO MENU</button>
+        </div>
     </div>
 
     <div id="game-container">
@@ -383,20 +434,40 @@
             mouseSensitivity: 0.0025
         };
 
-        const nextbotImg = new Image();
-        nextbotImg.src = 'character.png'; 
+        let userCoins = parseInt(localStorage.getItem('st_joes_coins')) || 0;
+        let ownedSkins = JSON.parse(localStorage.getItem('st_joes_skins')) || ['default'];
+        let equippedSkin = localStorage.getItem('st_joes_equipped') || 'default';
 
-        let nextbot = { x: 18.5, y: 13.5, speed: 0.042, radius: 0.3 };
-
-        let notebooks = [
-            { x: 1.5, y: 13.5, collected: false },
-            { x: 8.5, y: 1.5, collected: false },
-            { x: 5.5, y: 7.5, collected: false },
-            { x: 12.5, y: 5.5, collected: false },
-            { x: 18.5, y: 1.5, collected: false },
-            { x: 10.5, y: 10.5, collected: false },
-            { x: 14.5, y: 12.5, collected: false }
+        const shopCatalog = [
+            { id: 'default', name: 'Default Teacher', cost: 0, src: 'character.png' },
+            { id: 'evil_red', name: 'Rage Principal', cost: 50, src: 'image_6fcfc9.png' },
+            { id: 'shadow', name: 'Corridor Shadow', cost: 100, src: 'image_6fdb0b.png' },
+            { id: 'cyborg', name: 'Mech Overseer', cost: 200, src: 'image_6fdeeb.png' }
         ];
+
+        const nextbotImg = new Image();
+        function updateMonsterTexture() {
+            let current = shopCatalog.find(s => s.id === equippedSkin) || shopCatalog[0];
+            nextbotImg.src = current.src;
+        }
+        updateMonsterTexture();
+
+        let nextbot = { x: 18.5, y: 13.5, speed: 0.042, radius: 0.25 };
+
+        let notebooks = [];
+        function resetNotebooks() {
+            notebooks = [
+                { x: 1.5, y: 13.5, collected: false },
+                { x: 8.5, y: 1.5, collected: false },
+                { x: 5.5, y: 7.5, collected: false },
+                { x: 12.5, y: 5.5, collected: false },
+                { x: 18.5, y: 1.5, collected: false },
+                { x: 10.5, y: 10.5, collected: false },
+                { x: 14.5, y: 12.5, collected: false }
+            ];
+            notebooksCollected = 0;
+            document.getElementById('game-ui').innerText = `Notebooks: 0/7`;
+        }
 
         let keys = {};
         let notebooksCollected = 0;
@@ -407,6 +478,13 @@
 
         let FOV_Rays = 400; 
 
+        function updateCoinDisplays() {
+            document.getElementById('menu-coin-display').innerText = `Coins: ${userCoins}`;
+            document.getElementById('shop-coin-display').innerText = `Coins: ${userCoins}`;
+            localStorage.setItem('st_joes_coins', userCoins);
+        }
+        updateCoinDisplays();
+
         window.addEventListener('resize', resizeCanvas);
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -416,6 +494,70 @@
         function toggleOptions(show) {
             document.getElementById('game-menu').style.display = show ? 'none' : 'flex';
             document.getElementById('options-menu').style.display = show ? 'flex' : 'none';
+        }
+
+        function toggleShop(show) {
+            document.getElementById('game-menu').style.display = show ? 'none' : 'flex';
+            document.getElementById('shop-menu').style.display = show ? 'flex' : 'none';
+            if (show) renderShop();
+        }
+
+        function renderShop() {
+            const container = document.getElementById('shop-items-container');
+            container.innerHTML = '';
+            
+            shopCatalog.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'shop-item';
+
+                const isOwned = ownedSkins.includes(item.id);
+                const isEquipped = equippedSkin === item.id;
+
+                let actionBtnHtml = '';
+                if (isEquipped) {
+                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:4px 10px; background:#64ffda;" onclick="unequipSkin('${item.id}')">EQUIPPED</button>`;
+                } else if (isOwned) {
+                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:4px 10px; background:#a910ff; color:white;" onclick="equipSkin('${item.id}')">EQUIP</button>`;
+                } else {
+                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:4px 10px; background:#ffd700;" onclick="buySkin('${item.id}', ${item.cost})">BUY</button>`;
+                }
+
+                itemDiv.innerHTML = `
+                    <div class="shop-item-info">
+                        <div class="shop-item-name">${item.name}</div>
+                        <div class="shop-item-cost">${isOwned ? 'Unlocked' : item.cost + ' Coins'}</div>
+                    </div>
+                    <div>${actionBtnHtml}</div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        function buySkin(id, cost) {
+            if (userCoins >= cost) {
+                userCoins -= cost;
+                ownedSkins.push(id);
+                localStorage.setItem('st_joes_skins', JSON.stringify(ownedSkins));
+                updateCoinDisplays();
+                renderShop();
+                triggerAnnouncement("New skin purchased!");
+            } else {
+                alert("Not enough coins!");
+            }
+        }
+
+        function equipSkin(id) {
+            equippedSkin = id;
+            localStorage.setItem('st_joes_equipped', equippedSkin);
+            updateMonsterTexture();
+            renderShop();
+        }
+
+        function unequipSkin(id) {
+            equippedSkin = 'default';
+            localStorage.setItem('st_joes_equipped', equippedSkin);
+            updateMonsterTexture();
+            renderShop();
         }
 
         function toggleControlMode() {
@@ -458,15 +600,37 @@
                 player.x = 9.5;
                 player.y = 5.5;
                 triggerAnnouncement("TELEPORT CHEAT UNLOCKED!");
+            } else if(entry === "RICH") {
+                userCoins += 100;
+                updateCoinDisplays();
+                triggerAnnouncement("+100 FREE COINS!");
             } else {
                 triggerAnnouncement("Invalid Cheat Code!");
             }
             document.getElementById('cheatCodeField').value = "";
         }
 
+        function stopGameAndReturn() {
+            gameRunning = false;
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+            document.exitPointerLock?.();
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('game-menu').style.display = 'flex';
+            updateCoinDisplays();
+        }
+
         function startGame() {
             playMusic();
+            resetNotebooks();
+            gameOver = false;
             gameRunning = true;
+            
+            player.x = 1.5;
+            player.y = 1.5;
+            nextbot.x = 18.5;
+            nextbot.y = 13.5;
+
             document.getElementById('game-menu').style.display = 'none';
             document.getElementById('game-container').style.display = 'block';
             
@@ -519,12 +683,7 @@
             }
 
             if (e.key === "Escape") {
-                gameRunning = false;
-                window.removeEventListener('keydown', handleKeyDown);
-                window.removeEventListener('keyup', handleKeyUp);
-                document.exitPointerLock?.();
-                document.getElementById('game-container').style.display = 'none';
-                document.getElementById('game-menu').style.display = 'flex';
+                stopGameAndReturn();
                 return;
             }
             keys[e.key.toLowerCase()] = true; 
@@ -534,6 +693,26 @@
                 return;
             }
             keys[e.key.toLowerCase()] = false;
+        }
+
+        function checkWallCollision(x, y, radius) {
+            let checkPoints = [
+                {x: x - radius, y: y - radius},
+                {x: x + radius, y: y - radius},
+                {x: x - radius, y: y + radius},
+                {x: x + radius, y: y + radius},
+                {x: x, y: y - radius},
+                {x: x, y: y + radius},
+                {x: x - radius, y: y},
+                {x: x + radius, y: y}
+            ];
+            for (let p of checkPoints) {
+                let gx = Math.floor(p.x);
+                let gy = Math.floor(p.y);
+                if (gx < 0 || gx >= mapWidth || gy < 0 || gy >= mapHeight) return true;
+                if (schoolMap[gy][gx] === 1) return true;
+            }
+            return false;
         }
 
         function update() {
@@ -561,11 +740,11 @@
 
             if (moveXDir !== 0 || moveYDir !== 0) {
                 let length = Math.sqrt(moveXDir * moveXDir + moveYDir * moveYDir);
-                let targetX = player.x + (moveXDir / length) * player.moveSpeed;
-                let targetY = player.y + (moveYDir / length) * player.moveSpeed;
+                let stepX = (moveXDir / length) * player.moveSpeed;
+                let stepY = (moveYDir / length) * player.moveSpeed;
 
-                if (schoolMap[Math.floor(player.y)][Math.floor(targetX)] === 0) player.x = targetX;
-                if (schoolMap[Math.floor(targetY)][Math.floor(player.x)] === 0) player.y = targetY;
+                if (!checkWallCollision(player.x + stepX, player.y, 0.2)) player.x += stepX;
+                if (!checkWallCollision(player.x, player.y + stepY, 0.2)) player.y += stepY;
             }
 
             let dx = player.x - nextbot.x;
@@ -573,24 +752,22 @@
             let distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance > 0) {
-                let nextStepX = nextbot.x + (dx / distance) * nextbot.speed;
-                let nextStepY = nextbot.y + (dy / distance) * nextbot.speed;
+                let stepX = (dx / distance) * nextbot.speed;
+                let stepY = (dy / distance) * nextbot.speed;
 
-                let checkX = (dx > 0) ? nextStepX + nextbot.radius : nextStepX - nextbot.radius;
-                let checkY = (dy > 0) ? nextStepY + nextbot.radius : nextStepY - nextbot.radius;
-
-                if (schoolMap[Math.floor(nextbot.y)][Math.floor(checkX)] === 0) {
-                    nextbot.x = nextStepX;
+                if (!checkWallCollision(nextbot.x + stepX, nextbot.y, nextbot.radius)) {
+                    nextbot.x += stepX;
                 }
-                if (schoolMap[Math.floor(checkY)][Math.floor(nextbot.x)] === 0) {
-                    nextbot.y = nextStepY;
+                if (!checkWallCollision(nextbot.x, nextbot.y + stepY, nextbot.radius)) {
+                    nextbot.y += stepY;
                 }
             }
 
             if (distance < 0.35) {
                 gameOver = true;
                 alert("CAUGHT BY THE TEACHER!");
-                window.location.reload();
+                stopGameAndReturn();
+                return;
             }
 
             notebooks.forEach((nb) => {
@@ -603,8 +780,9 @@
                         triggerAnnouncement(`You picked up a notebook! (${notebooksCollected}/7)`);
 
                         if (notebooksCollected === 7) {
-                            alert("YOU ESCAPED ST JOSEPH'S!");
-                            window.location.reload();
+                            userCoins += 50;
+                            alert("YOU ESCAPED ST JOSEPH'S!\nEarned 50 Coins!");
+                            stopGameAndReturn();
                         }
                     }
                 }

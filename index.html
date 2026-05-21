@@ -98,7 +98,7 @@
         }
 
         .coin-counter {
-            font-size: 24px;
+            font-size: 28px;
             color: #ffd700;
             text-shadow: 2px 2px #000;
             margin-bottom: 15px;
@@ -169,38 +169,75 @@
         }
 
         .shop-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
             width: 100%;
-            max-height: 300px;
+            max-width: 600px;
+            max-height: 420px;
             overflow-y: auto;
-            padding-right: 5px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 12px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
         }
 
         .shop-item {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 8px;
-            border: 2px solid white;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 10px;
+            border: 3px solid #fff;
+            box-sizing: border-box;
+            transition: transform 0.2s;
         }
 
-        .shop-item-info {
-            text-align: left;
+        .shop-item:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .shop-item.equipped {
+            border-color: #64ffda;
+            background: rgba(100, 255, 218, 0.1);
+        }
+
+        .shop-preview-container {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .shop-item-preview {
+            max-width: 90px;
+            max-height: 90px;
+            object-fit: contain;
+            image-rendering: pixelated;
         }
 
         .shop-item-name {
             font-weight: bold;
             font-size: 18px;
             color: #ffff00;
+            margin-bottom: 4px;
+            text-shadow: 2px 2px #000;
         }
 
         .shop-item-cost {
-            font-size: 14px;
+            font-size: 15px;
             color: #ffd700;
+            margin-bottom: 12px;
+            font-weight: bold;
+            text-shadow: 1px 1px #000;
         }
 
         .code-box {
@@ -345,12 +382,12 @@
     <div id="shop-menu" class="menu-screen">
         <h2>Monster Customization</h2>
         <div class="coin-counter" id="shop-coin-display">Coins: 0</div>
-        <div class="menu-buttons" style="max-width: 400px;">
-            <div class="shop-grid" id="shop-items-container">
-            </div>
-            <br>
-            <button class="btn" style="background: #ff0000; color: white;" onclick="toggleShop(false)">BACK TO MENU</button>
+        
+        <div class="shop-grid" id="shop-items-container">
         </div>
+        
+        <br>
+        <button class="btn" style="background: #ff0000; color: white; width: 100%; max-width: 250px;" onclick="toggleShop(false)">BACK TO MENU</button>
     </div>
 
     <div id="game-container">
@@ -440,7 +477,7 @@
 
         const shopCatalog = [
             { id: 'default', name: 'Default Teacher', cost: 0, src: 'character.png' },
-            { id: 'evil_red', name: 'Rage Principal', cost: 50, src: 'image_6fcfc9.png' },
+            { id: 'evil_red', name: 'Rage Principal', cost: 50, src: 'image_6fdf31.png' },
             { id: 'shadow', name: 'Corridor Shadow', cost: 100, src: 'image_6fdb0b.png' },
             { id: 'cyborg', name: 'Mech Overseer', cost: 200, src: 'image_6fdeeb.png' }
         ];
@@ -513,20 +550,25 @@
                 const isOwned = ownedSkins.includes(item.id);
                 const isEquipped = equippedSkin === item.id;
 
+                if (isEquipped) {
+                    itemDiv.classList.add('equipped');
+                }
+
                 let actionBtnHtml = '';
                 if (isEquipped) {
-                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:4px 10px; background:#64ffda;" onclick="unequipSkin('${item.id}')">EQUIPPED</button>`;
+                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:6px 12px; background:#64ffda; box-shadow: 2px 2px 0px #111;" onclick="unequipSkin('${item.id}')">UNEQUIP</button>`;
                 } else if (isOwned) {
-                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:4px 10px; background:#a910ff; color:white;" onclick="equipSkin('${item.id}')">EQUIP</button>`;
+                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:6px 12px; background:#a910ff; color:white; box-shadow: 2px 2px 0px #111;" onclick="equipSkin('${item.id}')">EQUIP</button>`;
                 } else {
-                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:4px 10px; background:#ffd700;" onclick="buySkin('${item.id}', ${item.cost})">BUY</button>`;
+                    actionBtnHtml = `<button class="btn" style="font-size:14px; padding:6px 12px; background:#ffd700; box-shadow: 2px 2px 0px #111;" onclick="buySkin('${item.id}', ${item.cost})">BUY</button>`;
                 }
 
                 itemDiv.innerHTML = `
-                    <div class="shop-item-info">
-                        <div class="shop-item-name">${item.name}</div>
-                        <div class="shop-item-cost">${isOwned ? 'Unlocked' : item.cost + ' Coins'}</div>
+                    <div class="shop-preview-container">
+                        <img src="${item.src}" alt="${item.name}" class="shop-item-preview">
                     </div>
+                    <div class="shop-item-name">${item.name}</div>
+                    <div class="shop-item-cost">${isOwned ? (isEquipped ? 'Active' : 'Unlocked') : item.cost + ' Coins'}</div>
                     <div>${actionBtnHtml}</div>
                 `;
                 container.appendChild(itemDiv);

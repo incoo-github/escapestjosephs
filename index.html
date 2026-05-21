@@ -113,11 +113,38 @@
             font-family: inherit;
             box-shadow: 5px 5px 0px #333;
             font-weight: bold;
+            position: relative;
         }
 
-        .btn:hover {
+        .btn:hover:not(.disabled) {
             background-color: #ffff00;
             transform: scale(1.03);
+        }
+
+        .btn-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .soon-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            color: #ff0000;
+            font-size: 26px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #000;
+            box-sizing: border-box;
+            transform: rotate(-3deg);
+            text-shadow: 2px 2px #000;
+            pointer-events: none; 
+            letter-spacing: 2px;
         }
 
         .code-box {
@@ -138,6 +165,7 @@
             text-transform: uppercase;
             width: 180px;
             color: black;
+            user-select: text !important;
         }
 
         #game-container {
@@ -191,6 +219,12 @@
         </div>
         <div class="menu-buttons">
             <button class="btn" onclick="startGame()">START GAME</button>
+            
+            <div class="btn-wrapper">
+                <button class="btn disabled" style="width:100%; opacity: 0.4;" disabled>MULTIPLAYER</button>
+                <div class="soon-overlay">COMING SOON</div>
+            </div>
+
             <button class="btn" onclick="toggleOptions(true)">OPTIONS & CODES</button>
             <button class="btn" onclick="alert('Find 7 notebooks and avoid the teacher!\n\nChromebook: WASD or Arrows to walk, trackpad to look around.\nPC: WASD to walk, Mouse to look around.\n\nClick game screen to lock view look!')">HOW TO PLAY</button>
         </div>
@@ -348,16 +382,26 @@
             window.addEventListener('keyup', handleKeyUp);
             
             setTimeout(() => {
-                canvas.requestPointerLock?.();
+                if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                    canvas.requestPointerLock?.();
+                }
             }, 100);
 
-            canvas.addEventListener('click', () => {
+            canvas.addEventListener('click', (e) => {
                 if (gameRunning) canvas.requestPointerLock?.();
             });
             document.addEventListener('mousemove', handleMouseMove);
 
             gameLoop();
         }
+
+        document.addEventListener('pointerlockchange', () => {
+            if (document.pointerLockElement !== canvas && gameRunning) {
+                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                    return; 
+                }
+            }
+        });
 
         function handleMouseMove(e) {
             if (!gameRunning || document.pointerLockElement !== canvas) return;
@@ -375,6 +419,10 @@
         }
 
         function handleKeyDown(e) {
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                return;
+            }
+
             if (e.key === "Escape") {
                 gameRunning = false;
                 window.removeEventListener('keydown', handleKeyDown);
@@ -387,6 +435,9 @@
             keys[e.key.toLowerCase()] = true; 
         }
         function handleKeyUp(e) { 
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                return;
+            }
             keys[e.key.toLowerCase()] = false;
         }
 

@@ -40,6 +40,11 @@
             background-repeat: no-repeat;
         }
 
+        if-game-menu {
+            border: 10px solid #ff0000;
+            display: flex;
+        }
+
         #game-menu {
             border: 10px solid #ff0000;
             display: flex;
@@ -308,13 +313,11 @@
     </audio>
 
     <script>
-        // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = "https://jspotbqoqqpkqtnaqyqc.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU";
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Listen for data inserts on the announcements table
         supabaseClient
             .channel('schema-db-changes')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'announcements' }, (payload) => {
@@ -324,8 +327,6 @@
             })
             .subscribe();
 
-
-        // --- GAME ENGINE VARIABLES ---
         let musicStarted = false;
         function playMusic() {
             if(!musicStarted) {
@@ -351,19 +352,19 @@
 
         let schoolMap = [
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,2,1],
-            [1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,1],
-            [1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
-            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
-            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
-            [1,0,1,1,1,1,1,0,0,0,0,0,0,1,0,0,0,0,0,1],
-            [1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,1,1,1,1],
-            [1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1],
-            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-            [1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,0,1],
-            [1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1],
-            [1,2,2,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1],
-            [1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1],
+            [1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+            [1,0,1,0,1,0,1,1,1,0,1,0,1,1,1,1,1,1,0,1],
+            [1,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,1],
+            [1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,0,1],
+            [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,0,1],
+            [1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,1,1,0,1],
+            [1,0,1,1,0,1,0,1,1,1,1,1,0,1,0,1,0,0,0,1],
+            [1,0,1,0,0,0,0,1,0,0,0,1,0,1,0,1,0,1,1,1],
+            [1,0,1,0,1,1,1,1,0,1,0,1,0,0,0,1,0,0,0,1],
+            [1,0,0,0,1,0,0,0,0,1,0,1,1,1,1,1,1,1,0,1],
+            [1,1,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,1,0,1],
+            [1,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,0,0,0,1],
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
         ];
 
@@ -371,8 +372,8 @@
         const mapHeight = 15;
 
         let player = {
-            x: 2.5,     
-            y: 2.5,
+            x: 1.5,     
+            y: 1.5,
             dirX: -1,   
             dirY: 0,
             planeX: 0,  
@@ -385,7 +386,17 @@
         const nextbotImg = new Image();
         nextbotImg.src = 'character.png'; 
 
-        let nextbot = { x: 15.5, y: 10.5, speed: 0.038, radius: 0.3 };
+        let nextbot = { x: 18.5, y: 13.5, speed: 0.042, radius: 0.3 };
+
+        let notebooks = [
+            { x: 1.5, y: 13.5, collected: false },
+            { x: 8.5, y: 1.5, collected: false },
+            { x: 5.5, y: 7.5, collected: false },
+            { x: 12.5, y: 5.5, collected: false },
+            { x: 18.5, y: 1.5, collected: false },
+            { x: 10.5, y: 10.5, collected: false },
+            { x: 14.5, y: 12.5, collected: false }
+        ];
 
         let keys = {};
         let notebooksCollected = 0;
@@ -444,7 +455,7 @@
                 player.moveSpeed = 0.15;
                 triggerAnnouncement("SPEED CHEAT UNLOCKED!");
             } else if(entry === "TELEPORT" || entry === "31718") {
-                player.x = 10.5;
+                player.x = 9.5;
                 player.y = 5.5;
                 triggerAnnouncement("TELEPORT CHEAT UNLOCKED!");
             } else {
@@ -578,35 +589,38 @@
 
             if (distance < 0.35) {
                 gameOver = true;
-                alert("caught by teacher");
+                alert("CAUGHT BY THE TEACHER!");
                 window.location.reload();
             }
 
-            let currentGridX = Math.floor(player.x);
-            let currentGridY = Math.floor(player.y);
-            if(schoolMap[currentGridY] && schoolMap[currentGridY][currentGridX] === 2) {
-                schoolMap[currentGridY][currentGridX] = 0; 
-                notebooksCollected++;
-                document.getElementById('game-ui').innerText = `Notebooks: ${notebooksCollected}/7`;
-                
-                triggerAnnouncement(`You picked up a notebook! (${notebooksCollected}/7)`);
+            notebooks.forEach((nb) => {
+                if (!nb.collected) {
+                    let nDist = Math.sqrt(Math.pow(player.x - nb.x, 2) + Math.pow(player.y - nb.y, 2));
+                    if (nDist < 0.4) {
+                        nb.collected = true;
+                        notebooksCollected++;
+                        document.getElementById('game-ui').innerText = `Notebooks: ${notebooksCollected}/7`;
+                        triggerAnnouncement(`You picked up a notebook! (${notebooksCollected}/7)`);
 
-                if(notebooksCollected === 7) {
-                    alert("YOU ESCAPED ST JOSEPH'S!");
-                    window.location.reload();
+                        if (notebooksCollected === 7) {
+                            alert("YOU ESCAPED ST JOSEPH'S!");
+                            window.location.reload();
+                        }
+                    }
                 }
-            }
+            });
         }
 
         function draw() {
-            ctx.fillStyle = '#222'; 
+            ctx.fillStyle = '#0a0512'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
-            ctx.fillStyle = '#555'; 
+            ctx.fillStyle = '#1c1c1c'; 
             ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
 
             let w = canvas.width;
             let h = canvas.height;
             let step = w / FOV_Rays;
+            let zBuffer = [];
 
             for (let i = 0; i < FOV_Rays; i++) {
                 let cameraX = 2 * (i * step) / w - 1;
@@ -656,32 +670,76 @@
                 if (side === 0) perpWallDist = (mapX - player.x + (1 - stepX) / 2) / rayDirX;
                 else perpWallDist = (mapY - player.y + (1 - stepY) / 2) / rayDirY;
 
-                let lineHeight = Math.floor(h / perpWallDist);
+                zBuffer[i] = perpWallDist;
 
+                let lineHeight = Math.floor(h / perpWallDist);
                 let drawStart = -lineHeight / 2 + h / 2;
                 let drawEnd = lineHeight / 2 + h / 2;
 
-                ctx.fillStyle = (side === 1) ? '#c62828' : '#b71c1c'; 
+                let baseColor = (side === 1) ? 60 : 40;
+                let shadowFactor = Math.min(1, 3 / perpWallDist); 
+                ctx.fillStyle = `rgb(${baseColor * shadowFactor}, ${10 * shadowFactor}, ${15 * shadowFactor})`;
                 ctx.fillRect(Math.floor(i * step), drawStart, Math.ceil(step) + 1, drawEnd - drawStart);
             }
 
-            let spriteX = nextbot.x - player.x;
-            let spriteY = nextbot.y - player.y;
+            let itemsToRender = [];
 
-            let invDet = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
-            let transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
-            let transformY = invDet * (-player.planeY * spriteX + player.planeX * spriteY);
+            notebooks.forEach((nb) => {
+                if (!nb.collected) {
+                    itemsToRender.push({ x: nb.x, y: nb.y, type: 'notebook' });
+                }
+            });
 
-            if (transformY > 0.1) {
-                let spriteScreenX = Math.floor((w / 2) * (1 + transformX / transformY));
-                let spriteHeight = Math.abs(Math.floor(h / transformY));
-                let spriteWidth = Math.abs(Math.floor(h / transformY)) * 0.6;
+            itemsToRender.push({ x: nextbot.x, y: nextbot.y, type: 'teacher' });
 
-                let drawStartX = spriteScreenX - spriteWidth / 2;
-                let drawStartY = -spriteHeight / 2 + h / 2;
+            itemsToRender.sort((a, b) => {
+                let distA = Math.pow(player.x - a.x, 2) + Math.pow(player.y - a.y, 2);
+                let distB = Math.pow(player.x - b.x, 2) + Math.pow(player.y - b.y, 2);
+                return distB - distA;
+            });
 
-                ctx.drawImage(nextbotImg, drawStartX, drawStartY, spriteWidth, spriteHeight);
-            }
+            itemsToRender.forEach((item) => {
+                let spriteX = item.x - player.x;
+                let spriteY = item.y - player.y;
+
+                let invDet = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
+                let transformX = invDet * (player.dirY * spriteX - player.dirX * spriteY);
+                let transformY = invDet * (-player.planeY * spriteX + player.planeX * spriteY);
+
+                if (transformY > 0.1) {
+                    let spriteScreenX = Math.floor((w / 2) * (1 + transformX / transformY));
+                    let spriteHeight = Math.abs(Math.floor(h / transformY));
+                    let spriteWidth = spriteHeight * 0.6;
+
+                    let drawStartX = Math.floor(spriteScreenX - spriteWidth / 2);
+                    let drawStartY = Math.floor(-spriteHeight / 2 + h / 2);
+
+                    let centerRay = Math.floor((spriteScreenX / w) * FOV_Rays);
+                    if (centerRay >= 0 && centerRay < FOV_Rays && transformY < zBuffer[centerRay]) {
+                        if (item.type === 'teacher') {
+                            ctx.drawImage(nextbotImg, drawStartX, drawStartY, spriteWidth, spriteHeight);
+                        } else if (item.type === 'notebook') {
+                            let hoverOffset = Math.sin(Date.now() * 0.005) * 15;
+                            ctx.fillStyle = '#00ffff';
+                            ctx.strokeStyle = '#000';
+                            ctx.lineWidth = 3;
+                            
+                            let boxW = spriteWidth * 0.5;
+                            let boxH = spriteHeight * 0.4;
+                            let boxX = spriteScreenX - boxW / 2;
+                            let boxY = (h / 2) - (boxH / 2) + hoverOffset;
+
+                            ctx.fillRect(boxX, boxY, boxW, boxH);
+                            ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+                            ctx.fillStyle = '#fff';
+                            ctx.fillRect(boxX + 4, boxY + 4, boxW - 8, boxH - 8);
+                            ctx.fillStyle = '#ff0000';
+                            ctx.fillRect(boxX + 2, boxY + 2, 3, boxH - 4);
+                        }
+                    }
+                }
+            });
         }
 
         function gameLoop() {

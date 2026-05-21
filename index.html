@@ -177,31 +177,9 @@
             border: 2px solid white;
             z-index: 15;
         }
-
-        #announcement-banner {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            background-color: #ff0000;
-            color: #ffffff;
-            border-bottom: 5px solid #000;
-            padding: 12px 0;
-            font-size: 26px;
-            font-weight: bold;
-            text-align: center;
-            z-index: 100;
-            text-shadow: 2px 2px #000;
-            letter-spacing: 2px;
-            box-sizing: border-box;
-            box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
-        }
     </style>
 </head>
 <body>
-
-    <div id="announcement-banner">SYSTEM MESSAGE: <span id="announcement-text"></span></div>
 
     <div id="game-menu" class="menu-screen">
         <div class="title-container">
@@ -245,41 +223,7 @@
         <source src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Baldi+s+Basics+in+Education+and+Learning+Theme&filename=24/246197-69539207-6882-498c-859a-143093229b00.mp3" type="audio/mpeg">
     </audio>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script>
-        const SUPABASE_URL = 'https://jspotbqoqqpkqtnaqyqc.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU';
-        
-        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-
-        if (supabase) {
-            const networkChannel = supabase.channel('room-1', {
-                config: {
-                    broadcast: { self: true, ack: false }
-                }
-            });
-
-            networkChannel
-              .on('broadcast', { event: 'announcement' }, (response) => {
-                  const msg = response.payload?.message || response.message;
-                  if (msg) showLiveAnnouncement(msg);
-              })
-              .subscribe();
-        }
-
-        function showLiveAnnouncement(msg) {
-            const banner = document.getElementById('announcement-banner');
-            const textSpan = document.getElementById('announcement-text');
-            
-            textSpan.innerText = msg.toUpperCase();
-            banner.style.display = 'block';
-            
-            setTimeout(() => {
-                banner.style.display = 'none';
-            }, 7000);
-        }
-
         let musicStarted = false;
         function playMusic() {
             if(!musicStarted) {

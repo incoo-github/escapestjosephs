@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escape St Joseph's</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         body, html {
             margin: 0;
@@ -305,6 +308,24 @@
     </audio>
 
     <script>
+        // --- SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = "https://jspotbqoqqpkqtnaqyqc.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU";
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Listen for data inserts on the announcements table
+        supabaseClient
+            .channel('schema-db-changes')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'announcements' }, (payload) => {
+                if (payload.new && payload.new.message) {
+                    triggerAnnouncement(payload.new.message, 5000);
+                }
+            })
+            .subscribe();
+
+
+        // --- GAME ENGINE VARIABLES ---
         let musicStarted = false;
         function playMusic() {
             if(!musicStarted) {

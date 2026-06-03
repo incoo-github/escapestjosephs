@@ -131,7 +131,7 @@
             height: 70px;
             background: #eee;
             border: 3px solid #000;
-            border-radius: 0%; /* Keeps the "ticket" look */
+            border-radius: 0%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -187,7 +187,7 @@
             <button class="btn" onclick="startGame()">START GAME</button>
             <button class="btn" style="background: #ffd700;" onclick="toggleShop(true)">OPEN SHOP</button>
             <button class="btn" onclick="toggleOptions(true)">OPTIONS</button>
-            <button class="btn" onclick="alert('Find 7 notebooks and avoid the teacher!')">HOW TO PLAY</button>
+            <button class="btn" onclick="alert('Find 7 notebooks and avoid the teacher! Look out for other players roaming the halls!')">HOW TO PLAY</button>
         </div>
     </div>
 
@@ -223,6 +223,34 @@
         const SUPABASE_URL = "https://jspotbqoqqpkqtnaqyqc.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // --- MULTIPLAYER SETUP ---
+        const myPlayerId = "player_" + Math.random().toString(36).substring(2, 9);
+        let remotePlayers = {}; 
+        let textureCache = {}; 
+        let lastBroadcastTime = 0;
+        const broadcastInterval = 50; 
+
+        const multiplayerChannel = supabaseClient.channel('st_josephs_lobby');
+
+        multiplayerChannel
+            .on('broadcast', { event: 'player_moved' }, (response) => {
+                const data = response.payload;
+                if (data.id === myPlayerId) return; 
+
+                if (!textureCache[data.skin]) {
+                    textureCache[data.skin] = new Image();
+                    textureCache[data.skin].src = data.skinSrc;
+                }
+
+                remotePlayers[data.id] = {
+                    x: data.x,
+                    y: data.y,
+                    skin: data.skin,
+                    lastSeen: Date.now()
+                };
+            })
+            .subscribe();
 
         // --- GAME LOGIC ---
         let userCoins = parseInt(localStorage.getItem('st_joes_coins')) || 0;
@@ -296,6 +324,7 @@
             renderShop();
         }
 
+        // --- CORE ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const nextbotImg = new Image();
@@ -376,6 +405,25 @@
                 if(!checkWall(player.x, player.y+sy, 0.2)) player.y+=sy;
             }
 
+            // Network synchronization loop
+            let now = Date.now();
+            if (now - lastBroadcastTime > broadcastInterval) {
+                let activeSkinData = shopCatalog.find(s => s.id === equippedSkin) || shopCatalog[0];
+                multiplayerChannel.send({
+                    type: 'broadcast',
+                    event: 'player_moved',
+                    payload: { id: myPlayerId, x: player.x, y: player.y, skin: equippedSkin, skinSrc: activeSkinData.src }
+                });
+                lastBroadcastTime = now;
+            }
+
+            // Remove player avatars if they leave/disconnect
+            Object.keys(remotePlayers).forEach(id => {
+                if (now - remotePlayers[id].lastSeen > 2500) {
+                    delete remotePlayers[id];
+                }
+            });
+
             let dx = player.x - nextbot.x, dy = player.y - nextbot.y, dist = Math.sqrt(dx*dx+dy*dy);
             if(dist > 0.3) {
                 let bx = (dx/dist)*nextbot.speed, by = (dy/dist)*nextbot.speed;
@@ -414,7 +462,22 @@
                 ctx.fillRect(i*(canvas.width/FOV_Rays), -lh/2+canvas.height/2, (canvas.width/FOV_Rays)+1, lh);
             }
             
-            let sprites = [...notebooks.map(n=>({x:n.x,y:n.y,t:'n'})), {x:nextbot.x,y:nextbot.y,t:'m'}];
+            // Build rendering array
+            let sprites = [
+                ...notebooks.map(n => ({ x: n.x, y: n.y, t: 'n' })), 
+                { x: nextbot.x, y: nextbot.y, t: 'm' }
+            ];
+
+            // Add other players to engine rendering loop
+            Object.keys(remotePlayers).forEach(id => {
+                sprites.push({
+                    x: remotePlayers[id].x,
+                    y: remotePlayers[id].y,
+                    t: 'p',
+                    skin: remotePlayers[id].skin
+                });
+            });
+
             sprites.sort((a,b)=>((player.x-b.x)**2+(player.y-b.y)**2) - ((player.x-a.x)**2+(player.y-a.y)**2));
             sprites.forEach(s => {
                 let sx = s.x-player.x, sy = s.y-player.y, det = 1/(player.planeX*player.dirY-player.dirX*player.planeY);
@@ -422,8 +485,12 @@
                 if(tY > 0.1) {
                     let sScX = Math.floor((canvas.width/2)*(1+tX/tY)), sh = Math.abs(Math.floor(canvas.height/tY)), sw = sh*0.6;
                     if(tY < zBuf[Math.floor((sScX/canvas.width)*FOV_Rays)]) {
-                        if(s.t==='m') ctx.drawImage(nextbotImg, sScX-sw/2, -sh/2+canvas.height/2, sw, sh);
-                        else {
+                        if(s.t==='m') {
+                            ctx.drawImage(nextbotImg, sScX-sw/2, -sh/2+canvas.height/2, sw, sh);
+                        } else if(s.t==='p') {
+                            let playerImg = textureCache[s.skin] || nextbotImg;
+                            ctx.drawImage(playerImg, sScX-sw/2, -sh/2+canvas.height/2, sw, sh);
+                        } else {
                             ctx.fillStyle='#0ff'; ctx.fillRect(sScX-sw/4, -sh/4+canvas.height/2+(Math.sin(Date.now()*0.005)*15), sw/2, sh/3);
                         }
                     }

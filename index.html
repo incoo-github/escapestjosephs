@@ -48,6 +48,25 @@
             text-shadow: 5px 5px #000;
             margin: 0 0 20px 0;
             -webkit-text-stroke: 2px black;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Title logo container styling */
+        .title-character {
+            display: inline-block;
+            vertical-align: middle;
+            width: 55px;
+            height: 55px;
+            margin: 0 -5px 0 -5px;
+            position: relative;
+            top: -5px;
+            animation: titleFloat 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleFloat {
+            0% { transform: translateY(0px) rotate(-3deg); }
+            100% { transform: translateY(-8px) rotate(5deg); }
         }
 
         h2 {
@@ -195,7 +214,7 @@
     </div>
 
     <div id="game-menu" class="menu-screen">
-        <h1>ESCAPE ST JOSEPH'S</h1>
+        <h1>ESCAP<img src="character.png" class="title-character" alt="E"> ST JOSEPH'S</h1>
         <div class="coin-counter" id="menu-coin-display">Coins: 0</div>
         <div class="menu-buttons">
             <button class="btn" onclick="startGame()">START GAME</button>
@@ -203,26 +222,26 @@
             <button class="btn" onclick="toggleOptions(true)">OPTIONS</button>
             <button class="btn" onclick="alert('Find 7 notebooks and avoid the teacher!')">HOW TO PLAY</button>
         </div>
-        <div class="environment-tag">v1.0.0-production</div>
+        <div class="environment-tag">v1.0.0-loading</div>
     </div>
 
-    <div id="shop-menu" class="menu-screen">
+    <div id="shop-menu" class="menu-screen" style="display: none;">
         <h2>CHARACTER SHOP</h2>
         <div class="coin-counter" id="shop-coin-display">Coins: 0</div>
         <div class="shop-list" id="shop-items-container"></div>
         <br>
         <button class="btn" style="background: #ff0000; color: white;" onclick="toggleShop(false)">CLOSE SHOP</button>
-        <div class="environment-tag">v1.0.0-production</div>
+        <div class="environment-tag">v1.0.0-loading</div>
     </div>
 
-    <div id="options-menu" class="menu-screen">
+    <div id="options-menu" class="menu-screen" style="display: none;">
         <h2>SETTINGS</h2>
         <div class="menu-buttons">
             <button class="btn" onclick="userCoins += 10; updateCoinDisplays()">Cheat: +10 Coins</button>
         </div>
         <br>
         <button class="btn" style="background: #ff0000; color: white;" onclick="toggleOptions(false)">BACK</button>
-        <div class="environment-tag">v1.0.0-production</div>
+        <div class="environment-tag">v1.0.0-loading</div>
     </div>
 
     <div id="game-container">
@@ -236,6 +255,27 @@
     </audio>
 
     <script>
+        // --- VERCEL ENV DETECTOR ---
+        function detectEnvironment() {
+            const host = window.location.hostname;
+            let type = "production";
+            
+            if (host.includes("-git-") || host.includes(".vercel.app") && !host.startsWith("escape-st-josephs")) {
+                type = "preview";
+            } else if (host === "127.0.0.1" || host === "localhost") {
+                type = "local-dev";
+            }
+            
+            document.querySelectorAll('.environment-tag').forEach(tag => {
+                tag.innerText = `v1.0.0-${type}`;
+                if (type === "preview") {
+                    tag.style.color = "#ffaa00";
+                    tag.style.borderColor = "#ffaa00";
+                }
+            });
+        }
+        detectEnvironment();
+
         // --- PERFORMANCE GRAPHICS CONFIG ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -297,7 +337,6 @@
         function startGame() {
             document.getElementById('baldiAudio').play().catch(() => {});
             
-            // Re-allocate localized entities clean
             notebooks = [{x:1.5,y:13.5},{x:8.5,y:1.5},{x:5.5,y:7.5},{x:12.5,y:5.5},{x:18.5,y:1.5},{x:10.5,y:10.5},{x:14.5,y:12.5}];
             notebooksCollected = 0;
             player.x = 1.5; player.y = 1.5;
@@ -310,7 +349,6 @@
             canvas.width = window.innerWidth; 
             canvas.height = window.innerHeight;
             
-            // Force capture mouse context instantly upon direct interactive click
             canvas.requestPointerLock();
             
             gameRunning = true;

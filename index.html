@@ -161,13 +161,18 @@
 
         .environment-tag {
             position: absolute;
-            bottom: 15px;
-            left: 15px;
-            color: rgba(255, 255, 255, 0.4);
+            bottom: 25px;
+            left: 25px;
+            color: #00ffff;
             font-family: monospace;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 5px 10px;
+            border: 1px solid #00ffff;
             letter-spacing: 1px;
             pointer-events: none;
+            z-index: 9999;
         }
 
         #game-container { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 10; }
@@ -497,7 +502,7 @@
                             ctx.drawImage(nextbotImg, sScX - sw / 2, -sh / 2 + h / 2, sw, sh);
                         } else {
                             ctx.fillStyle = '#0ff'; 
-                            ctx.fillRect(sScX - sw / 4, -sh / 4 + h / 2 + (Math.sin(nowTime * 0.005) * 15), sw / 2, sh / 3);
+                            ctx.fillRect(sScX - sw / 4, -sh / 4 + h / 2 + (Math.sin(nowTime * 0.005) * 15), sw / 2, sw / 3);
                         }
                     }
                 }

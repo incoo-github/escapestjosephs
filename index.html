@@ -164,6 +164,7 @@
         #game-container { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 10; }
         canvas { display: block; width: 100%; height: 100%; }
         #game-ui { position: absolute; top: 20px; left: 20px; color: yellow; font-size: 28px; text-shadow: 3px 3px black; z-index: 15; }
+        #network-status { position: absolute; top: 60px; left: 20px; color: #00ffff; font-size: 14px; text-shadow: 1px 1px black; z-index: 15; font-family: monospace; }
         #esc-prompt { position: absolute; top: 20px; right: 20px; color: white; font-size: 14px; background: rgba(0,0,0,0.6); padding: 6px 12px; border: 2px solid white; z-index: 15; }
         
         .school-announcement {
@@ -211,6 +212,7 @@
 
     <div id="game-container">
         <div id="game-ui">Notebooks: 0/7</div>
+        <div id="network-status">Network: Connecting...</div>
         <div id="esc-prompt">ESC to quit</div>
         <canvas id="gameCanvas"></canvas>
     </div>
@@ -224,14 +226,20 @@
         const SUPABASE_ANON_KEY = "sb_publishable_F09p-qhJS6LXFSlyUvebHQ_p0PFU-RU";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // --- MULTIPLAYER SETUP ---
         const myPlayerId = "player_" + Math.random().toString(36).substring(2, 9);
         let remotePlayers = {}; 
         let textureCache = {}; 
         let lastBroadcastTime = 0;
         const broadcastInterval = 50; 
 
-        const multiplayerChannel = supabaseClient.channel('st_josephs_lobby');
+        const multiplayerChannel = supabaseClient.channel('room:main:hallways', {
+            config: {
+                broadcast: { 
+                    self: false, 
+                    ack: false   
+                }
+            }
+        });
 
         multiplayerChannel
             .on('broadcast', { event: 'player_moved' }, (response) => {
@@ -250,9 +258,21 @@
                     lastSeen: Date.now()
                 };
             })
-            .subscribe();
+            .subscribe((status) => {
+                const statusElement = document.getElementById('network-status');
+                if (status === 'SUBSCRIBED') {
+                    if (statusElement) statusElement.innerText = "Network: Connected";
+                    console.log('Successfully subscribed to Realtime channels.');
+                } else if (status === 'CHANNEL_ERROR') {
+                    if (statusElement) statusElement.innerText = "Network: Error (Check DB settings)";
+                    console.error('Subscription error occurred.');
+                }
+            });
 
-        // --- GAME LOGIC ---
+        window.addEventListener('beforeunload', () => {
+            supabaseClient.removeChannel(multiplayerChannel);
+        });
+
         let userCoins = parseInt(localStorage.getItem('st_joes_coins')) || 0;
         let ownedSkins = JSON.parse(localStorage.getItem('st_joes_skins')) || ['default'];
         let equippedSkin = localStorage.getItem('st_joes_equipped') || 'default';
@@ -324,7 +344,6 @@
             renderShop();
         }
 
-        // --- CORE ENGINE ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const nextbotImg = new Image();
@@ -405,7 +424,6 @@
                 if(!checkWall(player.x, player.y+sy, 0.2)) player.y+=sy;
             }
 
-            // Network synchronization loop
             let now = Date.now();
             if (now - lastBroadcastTime > broadcastInterval) {
                 let activeSkinData = shopCatalog.find(s => s.id === equippedSkin) || shopCatalog[0];
@@ -417,12 +435,17 @@
                 lastBroadcastTime = now;
             }
 
-            // Remove player avatars if they leave/disconnect
             Object.keys(remotePlayers).forEach(id => {
                 if (now - remotePlayers[id].lastSeen > 2500) {
                     delete remotePlayers[id];
                 }
             });
+
+            const activeNetworkPlayersCount = Object.keys(remotePlayers).length;
+            const statusElement = document.getElementById('network-status');
+            if (statusElement) {
+                statusElement.innerText = `Network: Connected (${activeNetworkPlayersCount} online)`;
+            }
 
             let dx = player.x - nextbot.x, dy = player.y - nextbot.y, dist = Math.sqrt(dx*dx+dy*dy);
             if(dist > 0.3) {
@@ -462,13 +485,11 @@
                 ctx.fillRect(i*(canvas.width/FOV_Rays), -lh/2+canvas.height/2, (canvas.width/FOV_Rays)+1, lh);
             }
             
-            // Build rendering array
             let sprites = [
                 ...notebooks.map(n => ({ x: n.x, y: n.y, t: 'n' })), 
                 { x: nextbot.x, y: nextbot.y, t: 'm' }
             ];
 
-            // Add other players to engine rendering loop
             Object.keys(remotePlayers).forEach(id => {
                 sprites.push({
                     x: remotePlayers[id].x,

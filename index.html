@@ -56,20 +56,20 @@
             -webkit-text-stroke: 2px black;
         }
 
-        /* Float character.png directly over the 'E' */
+        /* Adjusted character.png to look like it is sitting directly on top of the E */
         .title-character {
             position: absolute;
-            top: -45px;
-            left: 10px;
-            width: 45px;
-            height: 45px;
+            top: -36px;
+            left: 3px;
+            width: 42px;
+            height: 42px;
             animation: titleFloat 2s ease-in-out infinite alternate;
             z-index: 25;
         }
 
         @keyframes titleFloat {
-            0% { transform: translateY(0px) rotate(-3deg); }
-            100% { transform: translateY(-8px) rotate(5deg); }
+            0% { transform: translateY(0px) rotate(-2deg); }
+            100% { transform: translateY(-4px) rotate(3deg); }
         }
 
         h2 {
@@ -124,6 +124,14 @@
             background-color: #ffff00;
             transform: translateY(-2px);
             box-shadow: 7px 7px 0px #000;
+        }
+
+        .btn.disabled {
+            background-color: #555555;
+            color: #aaaaaa;
+            border-color: #222222;
+            box-shadow: 5px 5px 0px #222222;
+            cursor: not-allowed;
         }
 
         .code-input {
@@ -204,17 +212,16 @@
             font-weight: bold;
         }
 
+        /* Cleaned up version label setup */
         .environment-tag {
             position: absolute;
             bottom: 25px;
             left: 25px;
-            color: #00ffff;
+            color: #888888;
+            opacity: 0.5;
             font-family: monospace;
             font-size: 13px;
             font-weight: bold;
-            background: rgba(0, 0, 0, 0.75);
-            padding: 5px 10px;
-            border: 1px solid #00ffff;
             letter-spacing: 1px;
             pointer-events: none;
             z-index: 9999;
@@ -247,6 +254,7 @@
         <div class="coin-counter" id="menu-coin-display">Coins: 0</div>
         <div class="menu-buttons">
             <button class="btn" onclick="startGame()">START GAME</button>
+            <button class="btn disabled" disabled>MULTIPLAYER (SOON)</button>
             <button class="btn" style="background: #ffd700;" onclick="toggleShop(true)">OPEN SHOP</button>
             <button class="btn" onclick="toggleOptions(true)">OPTIONS</button>
             <button class="btn" onclick="alert('Find 7 notebooks and avoid the teacher!')">HOW TO PLAY</button>
@@ -269,8 +277,6 @@
             <input type="text" id="code-input" class="code-input" placeholder="ENTER CODE...">
             <button class="btn" id="submit-code-btn" onclick="checkCode()">REDEEM CODE</button>
             <div id="code-status" class="code-status"></div>
-            <hr style="width:100%; border:1px solid #555; margin:10px 0;">
-            <button class="btn" onclick="userCoins += 10; updateCoinDisplays()">Cheat: +10 Coins</button>
         </div>
         <br>
         <button class="btn" style="background: #ff0000; color: white;" onclick="toggleOptions(false)">BACK</button>
@@ -301,10 +307,6 @@
             
             document.querySelectorAll('.environment-tag').forEach(tag => {
                 tag.innerText = `v1.0.0-${type}`;
-                if (type === "preview") {
-                    tag.style.color = "#ffaa00";
-                    tag.style.borderColor = "#ffaa00";
-                }
             });
         }
         detectEnvironment();
@@ -366,7 +368,6 @@
             return false;
         }
 
-        // --- CLEAN ENTRY & POINTER LOCK FIX ---
         function startGame() {
             document.getElementById('baldiAudio').play().catch(() => {});
             
@@ -388,8 +389,15 @@
             gameLoop();
         }
 
-        // --- EVENT CONTROLLERS ---
-        window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+        window.addEventListener('keydown', e => {
+            keys[e.key.toLowerCase()] = true;
+            // Catching escape button inputs safely inside the event listener
+            if(e.key.toLowerCase() === 'escape' && gameRunning) {
+                gameRunning = false;
+                document.exitPointerLock();
+                location.reload();
+            }
+        });
         window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
         
         document.addEventListener('mousemove', e => {
@@ -432,7 +440,6 @@
             }
         }
 
-        // Code Redemptions Engine
         function checkCode() {
             const codeInput = document.getElementById('code-input').value.trim().toUpperCase();
             const status = document.getElementById('code-status');
@@ -537,7 +544,6 @@
                     }
                 }
             }
-            if(keys['escape']) location.reload();
         }
 
         function draw() {
